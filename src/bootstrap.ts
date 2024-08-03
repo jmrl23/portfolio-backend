@@ -9,12 +9,19 @@ import { logger } from './lib/common';
 import middleware from './plugins/middleware';
 import routes from './plugins/routes';
 import swagger from './plugins/swagger';
+import fastifyRateLimit from '@fastify/rate-limit';
+import ms from 'ms';
 
 export default fastifyPlugin(async function bootstrap(app) {
   await app.register(middleware);
 
   await app.register(fastifyCors, {
     origin: '*',
+  });
+
+  await app.register(fastifyRateLimit, {
+    max: 50,
+    timeWindow: ms('1m'),
   });
 
   await app.register(swagger);

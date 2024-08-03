@@ -1,10 +1,15 @@
+import redisStore from '@jmrl23/redis-store';
+import { caching } from 'cache-manager';
 import { FastifyRequest } from 'fastify';
 import multer from 'fastify-multer';
 import { File } from 'fastify-multer/lib/interfaces';
 import { BadRequest } from 'http-errors';
+import ms from 'ms';
 import fs from 'node:fs';
 import os from 'node:os';
+import path from 'node:path';
 import { asRoute } from '../lib/common';
+import { REDIS_URL } from '../lib/constant/env';
 import { fileStore } from '../lib/imagekit';
 import {
   FileDelete,
@@ -14,12 +19,8 @@ import {
   fileSchema,
   fileUploadSchema,
 } from '../schemas/file';
-import FileStorageService from '../services/FileStorageService';
-import redisStore from '@jmrl23/redis-store';
-import { REDIS_URL } from '../lib/constant/env';
 import CacheService from '../services/CacheService';
-import { caching } from 'cache-manager';
-import ms from 'ms';
+import FileStorageService from '../services/FileStorageService';
 
 export const prefix = '/files';
 
@@ -38,7 +39,7 @@ export default asRoute(async function fileRoute(app) {
   const cacheService = new CacheService(await caching(cacheStore));
   const fileStorageService = new FileStorageService(cacheService, fileStore);
   const upload = multer({
-    dest: os.tmpdir(),
+    dest: path.resolve(os.tmpdir(), 'portfolio-backend'),
   });
 
   await app.register(multer.contentParser);
@@ -65,6 +66,12 @@ export default asRoute(async function fileRoute(app) {
               },
             },
           },
+        },
+      },
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: ms('5m'),
         },
       },
       preValidation: [
@@ -119,6 +126,12 @@ export default asRoute(async function fileRoute(app) {
           },
         },
       },
+      config: {
+        rateLimit: {
+          max: 15,
+          timeWindow: ms('1m'),
+        },
+      },
       async handler(
         request: FastifyRequest<{
           Querystring: FileDelete;
@@ -158,6 +171,12 @@ export default asRoute(async function fileRoute(app) {
               },
             },
           },
+        },
+      },
+      config: {
+        rateLimit: {
+          max: 60,
+          timeWindow: ms('1m'),
         },
       },
       async handler(
