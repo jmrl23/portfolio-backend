@@ -1,5 +1,5 @@
-import type { JSONSchema } from 'json-schema-to-ts';
-import type { FastifyInstance } from 'fastify';
+import { JSONSchema } from 'json-schema-to-ts';
+import { FastifyInstance } from 'fastify';
 
 export type Schema = JSONSchema & Record<string, unknown>;
 

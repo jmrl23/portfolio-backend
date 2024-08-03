@@ -1,5 +1,9 @@
-import { createLogger, transports as Transports, format } from 'winston';
-import type { LoggerOptions } from 'winston';
+import {
+  createLogger,
+  transports as Transports,
+  format,
+  LoggerOptions,
+} from 'winston';
 import * as c from 'colorette';
 
 const options = new Map<NodeEnv, LoggerOptions>();
