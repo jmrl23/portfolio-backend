@@ -14,6 +14,7 @@
     "@types/detect-port": "^1.3.5",
     "@types/http-errors": "^2.0.4",
     "@types/morgan": "^1.9.9",
+    "@types/ms": "^0.7.34",
     "@types/node": "^20.14.10",
     "nodemon": "^3.1.4",
     "prettier": "^3.3.2",
@@ -26,6 +27,7 @@
     "@fastify/static": "^7.0.4",
     "@fastify/swagger": "^8.14.0",
     "@fastify/swagger-ui": "^4.0.0",
+    "@jmrl23/redis-store": "^2.3.4",
     "cache-manager": "^5.7.1",
     "colorette": "^2.0.20",
     "detect-port": "^1.6.1",
@@ -40,6 +42,7 @@
     "imagekit": "^5.0.1",
     "json-schema-to-ts": "^3.1.0",
     "morgan": "^1.10.0",
+    "ms": "^2.1.3",
     "winston": "^3.11.0"
   }
 }

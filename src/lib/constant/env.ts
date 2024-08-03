@@ -20,3 +20,5 @@ export const IMAGEKIT_URL_ENDPOINT = env
   .get('IMAGEKIT_URL_ENDPOINT')
   .required()
   .asString();
+
+export const REDIS_URL = env.get('REDIS_URL').required().asString();
