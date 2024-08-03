@@ -22,3 +22,8 @@ export const IMAGEKIT_URL_ENDPOINT = env
   .asString();
 
 export const REDIS_URL = env.get('REDIS_URL').required().asString();
+
+export const DISCORD_WEBHOOK_URL = env
+  .get('DISCORD_WEBHOOK_URL')
+  .required()
+  .asString();

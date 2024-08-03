@@ -18,7 +18,7 @@ import {
   fileListPayloadSchema,
   fileSchema,
   fileUploadSchema,
-} from '../schemas/file';
+} from '../schemas/files';
 import CacheService from '../services/CacheService';
 import FileStorageService from '../services/FileStorageService';
 
