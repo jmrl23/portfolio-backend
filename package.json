@@ -1,0 +1,45 @@
+{
+  "version": "0.0.1",
+  "main": "build/main.js",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tsc --build",
+    "start": "node .",
+    "start:dev": "nodemon -q",
+    "start:prod": "dotenv -v NODE_ENV=production -- node .",
+    "format": "prettier --write \"src/**/*.{ts,cjs,mjs,js}\""
+  },
+  "devDependencies": {
+    "@swc/core": "^1.6.13",
+    "@types/detect-port": "^1.3.5",
+    "@types/http-errors": "^2.0.4",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.14.10",
+    "nodemon": "^3.1.4",
+    "prettier": "^3.3.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "@fastify/middie": "^8.3.1",
+    "@fastify/static": "^7.0.4",
+    "@fastify/swagger": "^8.14.0",
+    "@fastify/swagger-ui": "^4.0.0",
+    "cache-manager": "^5.7.1",
+    "colorette": "^2.0.20",
+    "detect-port": "^1.6.1",
+    "dotenv": "^16.3.1",
+    "dotenv-cli": "^7.4.2",
+    "env-var": "^7.5.0",
+    "fastify": "^4.28.1",
+    "fastify-multer": "^2.0.3",
+    "fastify-plugin": "^4.5.1",
+    "glob": "^11.0.0",
+    "http-errors": "^2.0.0",
+    "imagekit": "^5.0.1",
+    "json-schema-to-ts": "^3.1.0",
+    "morgan": "^1.10.0",
+    "winston": "^3.11.0"
+  }
+}
