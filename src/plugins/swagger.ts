@@ -2,6 +2,7 @@ import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import fastifyPlugin from 'fastify-plugin';
 import type { OpenAPIV3_1 } from 'openapi-types';
+import { PRODUCTION_URL } from '../lib/constant/env';
 
 export default fastifyPlugin(async function swagger(app) {
   const servers: OpenAPIV3_1.ServerObject[] = [
@@ -10,6 +11,13 @@ export default fastifyPlugin(async function swagger(app) {
       description: 'Default local development server',
     },
   ];
+
+  if (PRODUCTION_URL) {
+    servers.unshift({
+      url: PRODUCTION_URL,
+      description: 'Production server',
+    });
+  }
 
   await app.register(fastifySwagger, {
     prefix: '/docs',

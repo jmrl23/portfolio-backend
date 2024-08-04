@@ -27,3 +27,5 @@ export const DISCORD_WEBHOOK_URL = env
   .get('DISCORD_WEBHOOK_URL')
   .required()
   .asString();
+
+export const PRODUCTION_URL = env.get('PRODUCTION_URL').asUrlString();
