@@ -1,11 +1,6 @@
-# Fastify Application Template
+# portfolio backend
 
-template for building fastify application
-
-<picture>
-  <source srcset="https://fastify.dev/img/logos/fastify-white.svg" media="(prefers-color-scheme: dark)" />
-  <img src="https://fastify.dev/img/logos/fastify-black.svg" />
-</picture>
+backend for my personal portfolio
 
 ## Installation
 
