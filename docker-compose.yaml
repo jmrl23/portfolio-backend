@@ -1,0 +1,17 @@
+services:
+  web:
+    build: .
+    ports:
+      - 3001:3001
+    environment:
+      - REDIS_URL=redis://redis
+    depends_on:
+      - redis
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis:/usr/local/etc/redis
+
+volumes:
+  redis:
