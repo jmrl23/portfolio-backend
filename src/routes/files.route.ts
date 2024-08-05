@@ -104,7 +104,7 @@ export default asRoute(async function fileRoute(app) {
     })
 
     .route({
-      method: 'delete',
+      method: 'DELETE',
       url: '/delete',
       schema: {
         description: 'Delete file',
@@ -153,7 +153,7 @@ export default asRoute(async function fileRoute(app) {
     })
 
     .route({
-      method: 'get',
+      method: 'GET',
       url: '',
       schema: {
         description: 'Get list of files',

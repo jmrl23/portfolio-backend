@@ -11,11 +11,11 @@ export const prefix = '/webhooks/discord';
 
 export default asRoute(async function discordRoute(app) {
   app.route({
-    method: 'post',
+    method: 'POST',
     url: '/send-message',
     schema: {
       description: 'Send message to discord',
-      tags: ['webhook', 'discord'],
+      tags: ['webhooks', 'discord'],
       body: discordSendMessageSchema,
       responses: {
         200: {

@@ -29,3 +29,8 @@ export const DISCORD_WEBHOOK_URL = env
   .asString();
 
 export const PRODUCTION_URL = env.get('PRODUCTION_URL').asUrlString();
+
+export const GITHUB_PERSONAL_ACCESS_TOKEN = env
+  .get('GITHUB_PERSONAL_ACCESS_TOKEN')
+  .required()
+  .asString();
