@@ -38,6 +38,12 @@ export default asRoute(async function githubRoute(app) {
         },
       },
     },
+    config: {
+      rateLimit: {
+        max: 15,
+        timeWindow: ms('1m'),
+      },
+    },
     async handler() {
       const projects = await githubService.getProjects();
       return {
