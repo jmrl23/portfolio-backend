@@ -17,6 +17,7 @@ export default fastifyPlugin(async function bootstrap(app) {
 
   await app.register(fastifyCors, {
     origin: '*',
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   });
 
   await app.register(fastifyRateLimit, {
