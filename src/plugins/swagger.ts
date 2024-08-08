@@ -36,13 +36,12 @@ export default fastifyPlugin(async function swagger(app) {
       },
       servers,
       components: {
-        // securitySchemes: {
-        //   bearerAuth: {
-        //     type: 'http',
-        //     scheme: 'bearer',
-        //     bearerFormat: 'JWT',
-        //   },
-        // },
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+          },
+        },
       },
     },
   });

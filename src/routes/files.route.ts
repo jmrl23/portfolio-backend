@@ -21,6 +21,7 @@ import {
 } from '../schemas/files';
 import CacheService from '../services/CacheService';
 import FileStorageService from '../services/FileStorageService';
+import authorizationHandler from '../handlers/authorization';
 
 export const prefix = '/files';
 
@@ -51,6 +52,7 @@ export default asRoute(async function fileRoute(app) {
       url: '/upload',
       schema: {
         description: 'Upload files',
+        security: [{ bearerAuth: [] }],
         tags: ['files'],
         consumes: ['multipart/form-data'],
         body: fileUploadSchema,
@@ -81,7 +83,7 @@ export default asRoute(async function fileRoute(app) {
           };
         },
       ],
-      preHandler: [upload.array('files', 5)],
+      preHandler: [authorizationHandler, upload.array('files', 5)],
       async handler(request) {
         if (request.files === undefined) {
           request.files = [];
@@ -108,6 +110,7 @@ export default asRoute(async function fileRoute(app) {
       url: '/delete',
       schema: {
         description: 'Delete file',
+        security: [{ bearerAuth: [] }],
         tags: ['files'],
         querystring: fileDeleteSchema,
         response: {

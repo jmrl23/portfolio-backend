@@ -34,3 +34,5 @@ export const GITHUB_PERSONAL_ACCESS_TOKEN = env
   .get('GITHUB_PERSONAL_ACCESS_TOKEN')
   .required()
   .asString();
+
+export const AUTH_KEY = env.get('AUTH_KEY').required().asString();

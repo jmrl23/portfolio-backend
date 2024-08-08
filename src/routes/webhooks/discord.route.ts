@@ -32,7 +32,7 @@ export default asRoute(async function discordRoute(app) {
     config: {
       rateLimit: {
         max: 2,
-        timeWindow: ms('1m'),
+        timeWindow: ms('5m'),
       },
     },
     async handler(
