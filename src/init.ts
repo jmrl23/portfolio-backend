@@ -6,21 +6,24 @@ import { logger } from './lib/common';
 
 console.clear();
 
-// possible values for `process.env.NODE_ENV`
-const NODE_ENV_VALUES = ['development', 'production', 'test'] as const;
 declare global {
   type NodeEnv = (typeof NODE_ENV_VALUES)[number];
   namespace NodeJS {
+    // declare types for environment variables
     interface ProcessEnv {
       NODE_ENV: NodeEnv;
+      // ...
     }
   }
 }
+
+// process.env.NODE_ENV validation
+const NODE_ENV_VALUES = ['development', 'production', 'test'] as const;
 if (process.env.NODE_ENV === undefined) process.env.NODE_ENV = 'development';
 if (!NODE_ENV_VALUES.includes(process.env.NODE_ENV))
   throw new Error('Invalid `process.env.NODE_ENV` value');
-// --
 
+// load .env files
 const NODE_ENV = process.env.NODE_ENV;
 const PROJECT_DIR = path.resolve(__dirname, '../');
 const ENV_PATHS = globSync(
@@ -33,7 +36,6 @@ const ENV_PATHS = globSync(
   { absolute: true },
 );
 
-// load from `.env` files
 for (const envPath of ENV_PATHS) {
   const { parsed } = dotenv.config({
     path: envPath,

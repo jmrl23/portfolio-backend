@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc --build",
     "start": "node .",
+    "test": "ts-node ./src/test.ts",
     "start:dev": "nodemon -q",
     "start:prod": "dotenv -v NODE_ENV=production -- node .",
     "format": "prettier --write \"src/**/*.{ts,cjs,mjs,js}\""

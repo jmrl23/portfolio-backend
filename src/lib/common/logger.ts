@@ -35,6 +35,11 @@ options.set('production', {
   transports: [new Transports.Console()],
 });
 
-const logger = createLogger(options.get(process.env.NODE_ENV));
+const logger = createLogger(
+  options.get(process.env.NODE_ENV) ?? {
+    // fallback logger
+    ...options.get('development'),
+  },
+);
 
 export default logger;

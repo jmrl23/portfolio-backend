@@ -1,13 +1,23 @@
-import type { FastifyInstance } from 'fastify';
+import { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import { glob } from 'glob';
 import path from 'node:path';
 import util from 'node:util';
 
+interface Options {
+  dirPath: string;
+  callback?: Callback;
+}
+
+interface Callback {
+  (routeFiles: string[]): void;
+}
+
 /**
- * route file rules:
- * - name must ends with `.route.{ts,js}`
+ * routes
+ * - filename must ends with `.route.{ts,js}`
  * - must export default a route function
+ *   check `src/lib/common/typings.ts` line 10 to 15
  * - prefix can be alter by exporting a prefix variable,
  *   example: `export const prefix = '/example'`
  */
@@ -38,12 +48,3 @@ export default fastifyPlugin(async function routes(
 
   callback?.(registeredRouteFiles);
 });
-
-interface Options {
-  dirPath: string;
-  callback?: Callback;
-}
-
-interface Callback {
-  (routeFiles: string[]): void;
-}
