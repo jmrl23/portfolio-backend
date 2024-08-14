@@ -1,12 +1,18 @@
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import fastifyPlugin from 'fastify-plugin';
-import type { OpenAPIV3_1 } from 'openapi-types';
-import { PRODUCTION_URL } from '../lib/constant/env';
 import fs from 'node:fs';
 import path from 'node:path';
+import { OpenAPIV3_1 } from 'openapi-types';
+import { PRODUCTION_URL } from '../lib/constant/env';
 
-export default fastifyPlugin(async function swagger(app) {
+export default fastifyPlugin(async function (app) {
+  const packageJson: Record<string, unknown> = JSON.parse(
+    fs.readFileSync(path.resolve(__dirname, '../../package.json')).toString(),
+  );
+  const version: string =
+    typeof packageJson.version === 'string' ? packageJson.version : '0.0.0';
+
   const servers: OpenAPIV3_1.ServerObject[] = [
     {
       url: 'http://localhost:3001',
@@ -20,11 +26,6 @@ export default fastifyPlugin(async function swagger(app) {
       description: 'Production server',
     });
   }
-
-  const packageJson = fs
-    .readFileSync(path.resolve(__dirname, '../../package.json'))
-    .toString();
-  const version: string = JSON.parse(packageJson)?.version ?? '0.0.0';
 
   await app.register(fastifySwagger, {
     prefix: '/docs',
@@ -40,6 +41,7 @@ export default fastifyPlugin(async function swagger(app) {
           bearerAuth: {
             type: 'http',
             scheme: 'bearer',
+            bearerFormat: 'JWT',
           },
         },
       },

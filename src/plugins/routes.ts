@@ -2,7 +2,6 @@ import { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import { glob } from 'glob';
 import path from 'node:path';
-import util from 'node:util';
 
 interface Options {
   dirPath: string;
@@ -22,7 +21,7 @@ interface Callback {
  *   example: `export const prefix = '/example'`
  */
 
-export default fastifyPlugin(async function routes(
+export default fastifyPlugin(async function (
   app: FastifyInstance,
   options: Options,
 ) {
@@ -33,15 +32,20 @@ export default fastifyPlugin(async function routes(
   const registeredRouteFiles: string[] = [];
   for (const routeFile of files) {
     const route = await import(routeFile);
-    if (!util.types.isAsyncFunction(route.default)) continue;
+
+    if (typeof route.default !== 'function') continue;
+
     const _path = routeFile.replace(/[\\/]/g, '/').substring(dirPath.length);
     const fileName = path.basename(routeFile);
+
     if ('prefix' in route && typeof route.prefix !== 'string') {
       throw new Error('Invalid route prefix');
     }
+
     const prefix =
       route.prefix ??
       (_path.substring(0, _path.length - fileName.length - 1) || '/');
+
     app.register(route, { prefix });
     registeredRouteFiles.push(routeFile);
   }

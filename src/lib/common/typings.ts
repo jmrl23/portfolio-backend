@@ -8,7 +8,7 @@ export function asJsonSchema<const T extends Schema>(schema: T): T {
 }
 
 interface RouteFunction {
-  (router: FastifyInstance): Promise<unknown>;
+  (router: FastifyInstance): Promise<void>;
 }
 
 export function asRoute(fn: RouteFunction): RouteFunction {

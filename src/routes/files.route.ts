@@ -31,7 +31,7 @@ declare module 'fastify' {
   }
 }
 
-export default asRoute(async function fileRoute(app) {
+export default asRoute(async function (app) {
   const cacheStore = redisStore({
     url: REDIS_URL,
     prefix: 'PortfolioBackend:FileStoreService',

@@ -9,7 +9,7 @@ import {
 
 export const prefix = '/webhooks/discord';
 
-export default asRoute(async function discordRoute(app) {
+export default asRoute(async function (app) {
   app.route({
     method: 'POST',
     url: '/send-message',

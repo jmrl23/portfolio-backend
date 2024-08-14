@@ -1,23 +1,24 @@
 import fastifyCors from '@fastify/cors';
+import fastifyEtag from '@fastify/etag';
+import fastifyMiddie from '@fastify/middie';
+import fastifyRateLimit from '@fastify/rate-limit';
 import fastifyStatic from '@fastify/static';
-import * as c from 'colorette';
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import { NotFound } from 'http-errors';
+import ms from 'ms';
 import path from 'node:path';
 import { logger } from './lib/common';
-import middleware from './plugins/middleware';
 import routes from './plugins/routes';
 import swagger from './plugins/swagger';
-import fastifyRateLimit from '@fastify/rate-limit';
-import ms from 'ms';
 
 export default fastifyPlugin(async function bootstrap(app) {
-  await app.register(middleware);
+  await app.register(fastifyEtag);
+
+  await app.register(fastifyMiddie);
 
   await app.register(fastifyCors, {
     origin: '*',
-    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   });
 
   await app.register(fastifyRateLimit, {
@@ -31,7 +32,7 @@ export default fastifyPlugin(async function bootstrap(app) {
     dirPath: path.resolve(__dirname, './routes'),
     callback(routes) {
       for (const route of routes) {
-        logger.info(`${c.bold('registered route')} ${route}`);
+        logger.info(`registered route {${route}}`);
       }
     },
   });

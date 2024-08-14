@@ -1,4 +1,3 @@
-import * as c from 'colorette';
 import dotenv from 'dotenv';
 import { globSync } from 'glob';
 import path from 'node:path';
@@ -35,7 +34,6 @@ const ENV_PATHS = globSync(
   ],
   { absolute: true },
 );
-
 for (const envPath of ENV_PATHS) {
   const { parsed } = dotenv.config({
     path: envPath,
@@ -45,7 +43,7 @@ for (const envPath of ENV_PATHS) {
   if (keys.length < 1) continue;
   if (keys.includes('NODE_ENV')) {
     process.env.NODE_ENV = NODE_ENV;
-    logger.warn(`Tried to alter \`NODE_ENV\` using a .env file: ${envPath}`);
+    logger.warn(`Tried to alter \`NODE_ENV\` using a .env file: {${envPath}}`);
   }
-  logger.info(`${c.bold('registered env')} ${envPath}`);
+  logger.info(`registered env {${envPath}}`);
 }

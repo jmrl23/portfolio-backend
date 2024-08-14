@@ -9,7 +9,7 @@ import { projectSchema } from '../schemas/github';
 
 export const prefix = '/github';
 
-export default asRoute(async function githubRoute(app) {
+export default asRoute(async function (app) {
   const cacheStore = redisStore({
     url: REDIS_URL,
     prefix: 'PortfolioBackend:GitHubService',

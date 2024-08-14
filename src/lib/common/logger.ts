@@ -1,45 +1,38 @@
-import {
-  createLogger,
-  transports as Transports,
-  format,
-  LoggerOptions,
-} from 'winston';
-import * as c from 'colorette';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import pino, { Logger } from 'pino';
 
-const options = new Map<NodeEnv, LoggerOptions>();
+const loggers = new Map<NodeEnv, Logger>();
 
-options.set('development', {
-  level: 'debug',
-  format: format.combine(
-    format.errors({ stack: true }),
-    format.timestamp(),
-    format.splat(),
-    format.colorize({ level: true }),
-    format.prettyPrint(),
-    format.printf(
-      ({ timestamp, level, message }) =>
-        `${c.gray(`[${timestamp}]`)} ${c.bold(level.padEnd(5))} ${message}`,
-    ),
-  ),
-  transports: [new Transports.Console()],
-});
-
-options.set('production', {
-  level: 'info',
-  format: format.combine(
-    format.errors({ stack: true }),
-    format.timestamp(),
-    format.uncolorize(),
-    format.json(),
-  ),
-  transports: [new Transports.Console()],
-});
-
-const logger = createLogger(
-  options.get(process.env.NODE_ENV) ?? {
-    // fallback logger
-    ...options.get('development'),
-  },
+loggers.set(
+  'development',
+  pino({
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        ignore: 'pid,hostname',
+        translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
+      },
+    },
+    serializers: {
+      req(request: FastifyRequest) {
+        return {
+          method: request.method,
+          url: request.url,
+          params: request.params,
+          query: request.query,
+        };
+      },
+      res(response: FastifyReply) {
+        return {
+          statusCode: response.statusCode,
+          headers: response.getHeaders(),
+        };
+      },
+    },
+  }),
 );
+
+const logger = loggers.get(process.env.NODE_ENV) ?? pino();
 
 export default logger;
