@@ -11,11 +11,11 @@
     "format": "prettier --write \"src/**/*.{ts,cjs,mjs,js}\""
   },
   "devDependencies": {
-    "@swc/core": "^1.7.6",
+    "@swc/core": "^1.7.11",
     "@types/detect-port": "^1.3.5",
     "@types/http-errors": "^2.0.4",
     "@types/ms": "^0.7.34",
-    "@types/node": "^22.1.0",
+    "@types/node": "^22.3.0",
     "json-schema-to-ts": "^3.1.0",
     "nodemon": "^3.1.4",
     "pino-pretty": "^11.2.2",
@@ -44,7 +44,6 @@
     "http-errors": "^2.0.0",
     "imagekit": "^5.1.0",
     "ms": "^2.1.3",
-    "octokit": "^4.0.2",
-    "winston": "^3.13.1"
+    "octokit": "^4.0.2"
   }
 }
