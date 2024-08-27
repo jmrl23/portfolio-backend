@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": true,
+    "outDir": "./build/"
+  },
+  "extends": "@tsconfig/recommended/tsconfig.json",
+  "include": ["./src/**/*.ts", "./src/**/*.js", "./src/**/*.json"],
+  "ts-node": {
+    "swc": true
+  }
+}
