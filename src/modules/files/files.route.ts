@@ -6,13 +6,13 @@ import ms from 'ms';
 import os from 'node:os';
 import path from 'node:path';
 import { asRoute } from '../../lib/common';
-import { authKeyPreHandler } from '../auth/authKeyPreHandler';
 import {
   fileDeleteSchema,
   fileListPayloadSchema,
   fileSchema,
   fileUploadSchema,
 } from './filesSchema';
+import { authApiPermissionHandler } from '../auth/authPreHandler';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -23,6 +23,9 @@ declare module 'fastify' {
 export default asRoute(async function (app) {
   const upload = multer({
     dest: path.resolve(os.tmpdir(), 'portfolio-backend'),
+    limits: {
+      fileSize: 20480,
+    },
   });
 
   await app.register(multer.contentParser);
@@ -65,7 +68,10 @@ export default asRoute(async function (app) {
           };
         },
       ],
-      preHandler: [authKeyPreHandler, upload.array('files', 5)],
+      preHandler: [
+        authApiPermissionHandler('files.write'),
+        upload.array('files', 5),
+      ],
       async handler(request) {
         if (request.files === undefined) {
           request.files = [];
@@ -109,6 +115,7 @@ export default asRoute(async function (app) {
           },
         },
       },
+      preHandler: [authApiPermissionHandler('files.read')],
       async handler(
         request: FastifyRequest<{
           Querystring: FromSchema<typeof fileListPayloadSchema>;
@@ -149,7 +156,7 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preHandler: [authKeyPreHandler],
+      preHandler: [authApiPermissionHandler('files.delete')],
       async handler(
         request: FastifyRequest<{
           Querystring: FromSchema<typeof fileDeleteSchema>;

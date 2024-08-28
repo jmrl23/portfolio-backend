@@ -6,6 +6,7 @@ import { asRoute } from '../../lib/common';
 import { SMTP_URL } from '../../lib/constant/env';
 import { emailSendSchema } from './emailsSchema';
 import { EmailsService } from './emailsService';
+import { authApiPermissionHandler } from '../auth/authPreHandler';
 
 export default asRoute(async function (app) {
   const transporter = createTransport({
@@ -44,6 +45,7 @@ export default asRoute(async function (app) {
         },
       },
     },
+    preHandler: [authApiPermissionHandler('emails.write')],
     async handler(
       request: FastifyRequest<{
         Body: FromSchema<typeof emailSendSchema>;

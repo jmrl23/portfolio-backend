@@ -40,6 +40,7 @@ export const projectSchema = asJsonSchema({
     previewUrl: {
       type: 'string',
       format: 'uri',
+      nullable: true,
     },
     topics: {
       type: 'array',

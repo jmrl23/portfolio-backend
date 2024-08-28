@@ -15,7 +15,7 @@ import {
   projectUpdateSchema,
 } from './projectsSchema';
 import { ProjectsService } from './projectsService';
-import { authKeyPreHandler } from '../auth/authKeyPreHandler';
+import { authApiPermissionHandler } from '../auth/authPreHandler';
 
 export default asRoute(async function (app) {
   const projectsService = new ProjectsService(
@@ -57,7 +57,7 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preHandler: [authKeyPreHandler],
+      preHandler: [authApiPermissionHandler('projects.write')],
       async handler(
         request: FastifyRequest<{
           Body: FromSchema<typeof projectCreateSchema>;
@@ -97,6 +97,7 @@ export default asRoute(async function (app) {
           },
         },
       },
+      preHandler: [authApiPermissionHandler('projects.read')],
       async handler(
         request: FastifyRequest<{
           Querystring: FromSchema<typeof projectListPayloadSchema>;
@@ -136,7 +137,7 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preHandler: [authKeyPreHandler],
+      preHandler: [authApiPermissionHandler('projects.write')],
       async handler(
         request: FastifyRequest<{
           Body: FromSchema<typeof projectUpdateSchema>;
@@ -175,7 +176,7 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preHandler: [authKeyPreHandler],
+      preHandler: [authApiPermissionHandler('projects.write')],
       async handler(
         request: FastifyRequest<{
           Body: FromSchema<typeof projectUpdateImagesSchema>;
@@ -214,6 +215,7 @@ export default asRoute(async function (app) {
           },
         },
       },
+      preHandler: [authApiPermissionHandler('projects.delete')],
       async handler(
         request: FastifyRequest<{
           Params: FromSchema<typeof projectDeleteSchema>;

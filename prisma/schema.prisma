@@ -33,3 +33,14 @@ model Project {
   topics        String[] @default([])
   images        File[]
 }
+
+model AuthApiKey {
+  id        String   @id @default(uuid()) @map("_id")
+  createdAt DateTime @default(now())
+
+  key         String    @unique
+  description String?
+  permissions String[]
+  expires     DateTime?
+  revoked     Boolean   @default(false)
+}

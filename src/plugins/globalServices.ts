@@ -6,11 +6,13 @@ import { REDIS_URL } from '../lib/constant/env';
 import { CacheService } from '../modules/cache/cacheService';
 import { FilesService } from '../modules/files/filesService';
 import { filesStoreFactory } from '../modules/files/filesStoreFactory';
+import { AuthService } from '../modules/auth/authService';
 
 declare module 'fastify' {
   interface FastifyInstance {
     cacheService: CacheService;
     filesService: FilesService;
+    authService: AuthService;
   }
 }
 
@@ -39,6 +41,20 @@ export default fastifyPlugin(async function (app) {
     app.prismaClient,
   );
 
+  const authService = new AuthService(
+    new CacheService(
+      await caching(
+        redisStore({
+          url: REDIS_URL,
+          prefix: 'Portfolio:[Global]:AuthService',
+          ttl: ms('5m'),
+        }),
+      ),
+    ),
+    app.prismaClient,
+  );
+
   app.decorate('cacheService', cacheService);
   app.decorate('filesService', filesService);
+  app.decorate('authService', authService);
 });
