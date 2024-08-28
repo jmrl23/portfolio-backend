@@ -149,6 +149,38 @@ export const projectListPayloadSchema = asJsonSchema({
   },
 });
 
+export const projectUpdateSchema = asJsonSchema({
+  type: 'object',
+  additionalProperties: false,
+  required: ['id'],
+  properties: {
+    id: {
+      type: 'string',
+      format: 'uuid',
+    },
+    name: {
+      type: 'string',
+    },
+    description: {
+      type: 'string',
+    },
+    repositoryUrl: {
+      type: 'string',
+      format: 'uri',
+    },
+    previewUrl: {
+      type: 'string',
+      format: 'uri',
+    },
+    topics: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    },
+  },
+});
+
 export const projectUpdateImagesSchema = asJsonSchema({
   type: 'object',
   additionalProperties: false,

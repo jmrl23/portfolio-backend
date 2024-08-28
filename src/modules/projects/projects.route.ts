@@ -12,6 +12,7 @@ import {
   projectListPayloadSchema,
   projectSchema,
   projectUpdateImagesSchema,
+  projectUpdateSchema,
 } from './projectsSchema';
 import { ProjectsService } from './projectsService';
 import { authKeyPreHandler } from '../auth/authKeyPreHandler';
@@ -111,7 +112,46 @@ export default asRoute(async function (app) {
     })
 
     .route({
-      method: 'POST',
+      method: 'PATCH',
+      url: '/update',
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: ms('5m'),
+        },
+      },
+      schema: {
+        description: 'Update project',
+        security: [{ bearerAuth: [] }],
+        tags: ['projects'],
+        body: projectUpdateSchema,
+        response: {
+          200: {
+            description: 'Updated project',
+            type: 'object',
+            required: ['data'],
+            properties: {
+              data: projectSchema,
+            },
+          },
+        },
+      },
+      preHandler: [authKeyPreHandler],
+      async handler(
+        request: FastifyRequest<{
+          Body: FromSchema<typeof projectUpdateSchema>;
+        }>,
+      ) {
+        const { id, ...body } = request.body;
+        const project = await projectsService.updateProjectById(id, body);
+        return {
+          data: project,
+        };
+      },
+    })
+
+    .route({
+      method: 'PATCH',
       url: '/update-images',
       config: {
         rateLimit: {
@@ -142,7 +182,7 @@ export default asRoute(async function (app) {
         }>,
       ) {
         const { id, ...body } = request.body;
-        const project = await projectsService.updateProjectById(id, body);
+        const project = await projectsService.updateProjectImagesById(id, body);
         return {
           data: project,
         };

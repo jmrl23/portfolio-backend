@@ -8,6 +8,7 @@ import {
   projectListPayloadSchema,
   projectSchema,
   projectUpdateImagesSchema,
+  projectUpdateSchema,
 } from './projectsSchema';
 
 type Project = FromSchema<typeof projectSchema>;
@@ -155,6 +156,43 @@ export class ProjectsService {
   }
 
   public async updateProjectById(
+    id: string,
+    body: Omit<FromSchema<typeof projectUpdateSchema>, 'id'>,
+  ): Promise<Project> {
+    const updatedProject = await this.prismaClient.project.update({
+      where: { id },
+      data: {
+        name: body.name,
+        description: body.description,
+        repositoryUrl: body.repositoryUrl,
+        previewUrl: body.previewUrl,
+        topics: body.topics,
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        name: true,
+        description: true,
+        repositoryUrl: true,
+        topics: true,
+        images: {
+          select: {
+            id: true,
+            createdAt: true,
+            name: true,
+            size: true,
+            mimetype: true,
+            url: true,
+          },
+        },
+      },
+    });
+
+    return ProjectsService.serializeProject(updatedProject);
+  }
+
+  public async updateProjectImagesById(
     id: string,
     body: Omit<FromSchema<typeof projectUpdateImagesSchema>, 'id'>,
   ): Promise<Project> {
