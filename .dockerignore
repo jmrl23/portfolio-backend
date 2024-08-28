@@ -1,0 +1,7 @@
+node_modules/
+api/
+src/
+vercel.json
+.env
+.env.development*
+/prisma/.env
