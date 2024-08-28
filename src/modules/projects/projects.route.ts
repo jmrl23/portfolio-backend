@@ -43,10 +43,7 @@ export default asRoute(async function (app) {
           type: 'object',
           required: ['data'],
           properties: {
-            data: {
-              type: 'array',
-              items: projectSchema,
-            },
+            data: projectSchema,
           },
         },
       },

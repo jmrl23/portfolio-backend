@@ -3,6 +3,7 @@ import { CacheService } from '../cache/cacheService';
 import { FilesService } from '../files/filesService';
 import { FromSchema } from 'json-schema-to-ts';
 import { projectCreateSchema, projectSchema } from './projectsSchema';
+import { Conflict } from 'http-errors';
 
 type Project = FromSchema<typeof projectSchema>;
 
@@ -16,6 +17,13 @@ export class ProjectsService {
   public async createProject(
     body: FromSchema<typeof projectCreateSchema>,
   ): Promise<Project> {
+    const existingProject = await this.prismaClient.project.findUnique({
+      where: { name: body.name },
+      select: { id: true },
+    });
+
+    if (existingProject) throw new Conflict('Project already exists');
+
     const createdProject = await this.prismaClient.project.create({
       data: {
         name: body.name,
