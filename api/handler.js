@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 const fastify = require('fastify');
 const app = fastify();
 /** @type {import('fastify-plugin').default} */
