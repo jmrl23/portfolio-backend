@@ -461,12 +461,26 @@
   resolved "https://registry.yarnpkg.com/@types/ms/-/ms-0.7.34.tgz#10964ba0dee6ac4cd462e2795b6bebd407303433"
   integrity sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==
 
+"@types/node@*":
+  version "22.5.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.5.1.tgz#de01dce265f6b99ed32b295962045d10b5b99560"
+  integrity sha512-KkHsxej0j9IW1KKOOAA/XBA0z08UFSrRQHErzEfA3Vgq57eXIMYboIlHJuYIfd+lwCQjtKqUu3UnmKbtUc9yRw==
+  dependencies:
+    undici-types "~6.19.2"
+
 "@types/node@^22.1.0":
   version "22.1.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-22.1.0.tgz#6d6adc648b5e03f0e83c78dc788c2b037d0ad94b"
   integrity sha512-AOmuRF0R2/5j1knA3c6G3HOk523Ga+l+ZXltX8SF1+5oqcXijjfTd8fY3XRZqSihEu9XhtQnKYLmkFaoxgsJHw==
   dependencies:
     undici-types "~6.13.0"
+
+"@types/nodemailer@^6.4.15":
+  version "6.4.15"
+  resolved "https://registry.yarnpkg.com/@types/nodemailer/-/nodemailer-6.4.15.tgz#494be695e11c438f7f5df738fb4ab740312a6ed2"
+  integrity sha512-0EBJxawVNjPkng1zm2vopRctuWVCxk34JcIlRuXSf54habUWdz1FB7wHDqOqvDa8Mtpt0Q3LTXQkAs2LNyK5jQ==
+  dependencies:
+    "@types/node" "*"
 
 "@typescript-eslint/eslint-plugin@8.1.0":
   version "8.1.0"
@@ -1744,6 +1758,11 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
+nodemailer@^6.9.14:
+  version "6.9.14"
+  resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-6.9.14.tgz#845fda981f9fd5ac264f4446af908a7c78027f75"
+  integrity sha512-Dobp/ebDKBvz91sbtRKhcznLThrKxKt97GI2FAlAyy+fk19j73Uz3sBXolVtmcXjaorivqsbbbjDY+Jkt4/bQA==
+
 nodemon@^3.1.4:
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-3.1.4.tgz#c34dcd8eb46a05723ccde60cbdd25addcc8725e4"
@@ -2366,6 +2385,11 @@ undici-types@~6.13.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.13.0.tgz#e3e79220ab8c81ed1496b5812471afd7cf075ea5"
   integrity sha512-xtFJHudx8S2DSoujjMd1WeWvn7KKWFRESZTMeL1RptAYERu29D6jphMjjY+vn96jvN3kVPDNxU/E13VTaXj6jg==
+
+undici-types@~6.19.2:
+  version "6.19.8"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.19.8.tgz#35111c9d1437ab83a7cdc0abae2f26d88eda0a02"
+  integrity sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==
 
 uri-js@^4.2.2:
   version "4.4.1"
