@@ -10,7 +10,7 @@ export const emailSendSchema = asJsonSchema({
   properties: {
     from: {
       type: 'string',
-      default: smtp.username,
+      default: decodeURIComponent(smtp.username),
     },
     to: {
       type: 'array',
