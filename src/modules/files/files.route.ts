@@ -114,7 +114,7 @@ export default asRoute(async function (app) {
           Querystring: FromSchema<typeof fileListPayloadSchema>;
         }>,
       ) {
-        const files = await this.filesService.listFilesByPayload(request.query);
+        const files = await this.filesService.getFilesByPayload(request.query);
         return {
           data: files,
         };

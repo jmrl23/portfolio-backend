@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { File } from 'fastify-multer/lib/interfaces';
 import { InternalServerError } from 'http-errors';
 import { FromSchema } from 'json-schema-to-ts';
@@ -51,27 +51,23 @@ export class FilesService {
       },
     });
     await this.filesStore.delete(deletedFile.fileId);
-    const fileInfo: FileInfo & Record<string, unknown> = {
-      ...deletedFile,
-      createdAt: deletedFile.createdAt.toISOString(),
-    };
-    delete fileInfo.fileId;
-    return fileInfo;
+    return FilesService.serializeFile(deletedFile);
   }
 
-  public async listFilesByPayload(
+  public async getFilesByPayload(
     payload: FileListPayload,
   ): Promise<FileInfo[]> {
-    const cacheKey = `FileList:[payload]:(${JSON.stringify([
+    const cacheKey = `Files:[payload]:(${JSON.stringify([
       payload.createdAtFrom,
       payload.createdAtTo,
+      payload.skip,
+      payload.take,
+      payload.order,
       payload.id,
       payload.mimetype,
       payload.name,
       payload.sizeFrom,
       payload.sizeTo,
-      payload.skip,
-      payload.take,
     ])})`;
 
     if (payload.revalidate === true) {
@@ -111,11 +107,32 @@ export class FilesService {
         createdAt: payload.order,
       },
     });
-    const fileList: FileInfo[] = files.map((file) => ({
-      ...file,
-      createdAt: file.createdAt.toISOString(),
-    }));
+    const fileList: FileInfo[] = files.map((file) =>
+      FilesService.serializeFile(file),
+    );
     await this.cacheService.set(cacheKey, fileList);
     return fileList;
+  }
+
+  public static serializeFile(
+    file: Prisma.FileGetPayload<{
+      select: {
+        id: true;
+        createdAt: true;
+        name: true;
+        size: true;
+        mimetype: true;
+        url: true;
+      };
+    }>,
+  ): FileInfo {
+    if ('fileId' in file) {
+      delete file.fileId;
+    }
+
+    return {
+      ...file,
+      createdAt: file.createdAt.toISOString(),
+    };
   }
 }

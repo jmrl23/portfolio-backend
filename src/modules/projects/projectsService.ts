@@ -1,15 +1,18 @@
 import { Prisma, PrismaClient } from '@prisma/client';
+import { Conflict } from 'http-errors';
+import { FromSchema } from 'json-schema-to-ts';
 import { CacheService } from '../cache/cacheService';
 import { FilesService } from '../files/filesService';
-import { FromSchema } from 'json-schema-to-ts';
 import {
   projectCreateSchema,
+  projectListPayloadSchema,
   projectSchema,
   projectUpdateImagesSchema,
 } from './projectsSchema';
-import { Conflict } from 'http-errors';
 
 type Project = FromSchema<typeof projectSchema>;
+
+type ProjectListPayload = FromSchema<typeof projectListPayloadSchema>;
 
 export class ProjectsService {
   constructor(
@@ -63,7 +66,94 @@ export class ProjectsService {
     return ProjectsService.serializeProject(createdProject);
   }
 
-  public async getProjectsByPayload() {}
+  public async getProjectsByPayload(
+    payload: ProjectListPayload,
+  ): Promise<Project[]> {
+    const cacheKey = `Projects:[ref:payload]:(${JSON.stringify([
+      payload.createdAtFrom,
+      payload.createdAtTo,
+      payload.updatedAtFrom,
+      payload.updatedAtTo,
+      payload.skip,
+      payload.take,
+      payload.order,
+      payload.id,
+      payload.name,
+      payload.description,
+      payload.previewUrl,
+      payload.repositoryUrl,
+      `(${JSON.stringify(payload.topics)})`,
+    ])})`;
+
+    if (payload.revalidate === true) {
+      await this.cacheService.del(cacheKey);
+    }
+
+    const cachedData = await this.cacheService.get<Project[]>(cacheKey);
+    if (cachedData !== undefined) return cachedData;
+
+    const projects = await this.prismaClient.project.findMany({
+      where: {
+        createdAt: {
+          gte: payload.createdAtFrom,
+          lte: payload.createdAtTo,
+        },
+        updatedAt: {
+          gte: payload.updatedAtFrom,
+          lte: payload.updatedAtTo,
+        },
+        id: payload.id,
+        name: {
+          startsWith: payload.name,
+        },
+        description: {
+          startsWith: payload.description,
+        },
+        previewUrl: {
+          startsWith: payload.description,
+        },
+        repositoryUrl: {
+          startsWith: payload.repositoryUrl,
+        },
+        topics: payload.topics
+          ? {
+              hasSome: payload.topics,
+            }
+          : undefined,
+      },
+      skip: payload.skip,
+      take: payload.take,
+      orderBy: {
+        createdAt: payload.order,
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        name: true,
+        description: true,
+        repositoryUrl: true,
+        previewUrl: true,
+        topics: true,
+        images: {
+          select: {
+            id: true,
+            createdAt: true,
+            name: true,
+            size: true,
+            mimetype: true,
+            url: true,
+          },
+        },
+      },
+    });
+
+    const projectList: Project[] = projects.map((project) =>
+      ProjectsService.serializeProject(project),
+    );
+    await this.cacheService.set(cacheKey, projectList);
+    return projectList;
+  }
 
   public async updateProjectById(
     id: string,
@@ -103,7 +193,7 @@ export class ProjectsService {
 
   public async deleteProjectById() {}
 
-  private static serializeProject(
+  public static serializeProject(
     project: Prisma.ProjectGetPayload<{
       select: {
         id: true;
@@ -130,10 +220,7 @@ export class ProjectsService {
       ...project,
       createdAt: project.createdAt.toISOString(),
       updatedAt: project.updatedAt.toISOString(),
-      images: project.images.map((image) => ({
-        ...image,
-        createdAt: image.createdAt.toISOString(),
-      })),
+      images: project.images.map((image) => FilesService.serializeFile(image)),
     };
   }
 }

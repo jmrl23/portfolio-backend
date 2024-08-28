@@ -64,6 +64,18 @@ export const fileListPayloadSchema = asJsonSchema({
       type: 'string',
       format: 'date-time',
     },
+    skip: {
+      type: 'integer',
+      minimum: 0,
+    },
+    take: {
+      type: 'integer',
+      minimum: 0,
+    },
+    order: {
+      type: 'string',
+      enum: ['asc', 'desc'],
+    },
     name: {
       type: 'string',
     },
@@ -77,18 +89,6 @@ export const fileListPayloadSchema = asJsonSchema({
     sizeTo: {
       type: 'integer',
       minimum: 0,
-    },
-    skip: {
-      type: 'integer',
-      minimum: 0,
-    },
-    take: {
-      type: 'integer',
-      minimum: 0,
-    },
-    order: {
-      type: 'string',
-      enum: ['asc', 'desc'],
     },
   },
 });

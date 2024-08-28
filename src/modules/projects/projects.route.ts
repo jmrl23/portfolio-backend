@@ -8,6 +8,7 @@ import { REDIS_URL } from '../../lib/constant/env';
 import { CacheService } from '../cache/cacheService';
 import {
   projectCreateSchema,
+  projectListPayloadSchema,
   projectSchema,
   projectUpdateImagesSchema,
 } from './projectsSchema';
@@ -64,6 +65,47 @@ export default asRoute(async function (app) {
         const project = await projectsService.createProject(request.body);
         return {
           data: project,
+        };
+      },
+    })
+
+    .route({
+      method: 'GET',
+      url: '/',
+      config: {
+        rateLimit: {
+          max: 60,
+          timeWindow: ms('1m'),
+        },
+      },
+      schema: {
+        description: 'Get list of projects',
+        tags: ['projects'],
+        querystring: projectListPayloadSchema,
+        response: {
+          200: {
+            description: 'List of projects',
+            type: 'object',
+            required: ['data'],
+            properties: {
+              data: {
+                type: 'array',
+                items: projectSchema,
+              },
+            },
+          },
+        },
+      },
+      async handler(
+        request: FastifyRequest<{
+          Querystring: FromSchema<typeof projectListPayloadSchema>;
+        }>,
+      ) {
+        const projects = await projectsService.getProjectsByPayload(
+          request.query,
+        );
+        return {
+          data: projects,
         };
       },
     })
