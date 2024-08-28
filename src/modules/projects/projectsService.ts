@@ -17,7 +17,6 @@ type ProjectListPayload = FromSchema<typeof projectListPayloadSchema>;
 export class ProjectsService {
   constructor(
     private readonly cacheService: CacheService,
-    private readonly filesService: FilesService,
     private readonly prismaClient: PrismaClient,
   ) {}
 
@@ -191,7 +190,33 @@ export class ProjectsService {
     return ProjectsService.serializeProject(updatedProject);
   }
 
-  public async deleteProjectById() {}
+  public async deleteProjectById(id: string): Promise<Project> {
+    const project = await this.prismaClient.project.delete({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        name: true,
+        description: true,
+        repositoryUrl: true,
+        topics: true,
+        images: {
+          select: {
+            id: true,
+            createdAt: true,
+            name: true,
+            size: true,
+            mimetype: true,
+            url: true,
+          },
+        },
+      },
+    });
+    return ProjectsService.serializeProject(project);
+  }
 
   public static serializeProject(
     project: Prisma.ProjectGetPayload<{

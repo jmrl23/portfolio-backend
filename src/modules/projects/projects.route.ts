@@ -8,6 +8,7 @@ import { REDIS_URL } from '../../lib/constant/env';
 import { CacheService } from '../cache/cacheService';
 import {
   projectCreateSchema,
+  projectDeleteSchema,
   projectListPayloadSchema,
   projectSchema,
   projectUpdateImagesSchema,
@@ -25,7 +26,6 @@ export default asRoute(async function (app) {
         }),
       ),
     ),
-    app.filesService,
     app.prismaClient,
   );
 
@@ -143,6 +143,45 @@ export default asRoute(async function (app) {
       ) {
         const { id, ...body } = request.body;
         const project = await projectsService.updateProjectById(id, body);
+        return {
+          data: project,
+        };
+      },
+    })
+
+    .route({
+      method: 'DELETE',
+      url: '/delete/:id',
+      config: {
+        rateLimit: {
+          max: 50,
+          timeWindow: ms('5m'),
+        },
+      },
+      schema: {
+        description: 'Delete a project',
+        security: [{ bearerAuth: [] }],
+        tags: ['projects'],
+        params: projectDeleteSchema,
+        response: {
+          200: {
+            description: 'Deleted project',
+            type: 'object',
+            required: ['data'],
+            properties: {
+              data: projectSchema,
+            },
+          },
+        },
+      },
+      async handler(
+        request: FastifyRequest<{
+          Params: FromSchema<typeof projectDeleteSchema>;
+        }>,
+      ) {
+        const project = await projectsService.deleteProjectById(
+          request.params.id,
+        );
         return {
           data: project,
         };

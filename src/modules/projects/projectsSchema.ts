@@ -174,3 +174,15 @@ export const projectUpdateImagesSchema = asJsonSchema({
     },
   },
 });
+
+export const projectDeleteSchema = asJsonSchema({
+  type: 'object',
+  additionalProperties: false,
+  required: ['id'],
+  properties: {
+    id: {
+      type: 'string',
+      format: 'uuid',
+    },
+  },
+});
