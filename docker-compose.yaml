@@ -3,16 +3,11 @@ services:
     build: .
     environment:
       - REDIS_URL=redis://redis
-      - DATABASE_URL=postgresql://postgres:password@postgres/portfolio?schema=public
       - AUTH_KEY=auth.docker
+      # - DATABASE_URL=mongodb+srv://user:password@host/portfolio?retryWrites=true&w=majority&appName=Cluster0
     ports:
       - 3001:3001
     depends_on:
       - redis
-      - postgres
   redis:
     image: redis:7-alpine
-  postgres:
-    image: postgres
-    environment:
-      - POSTGRES_PASSWORD=password
