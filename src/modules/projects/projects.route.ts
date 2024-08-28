@@ -6,8 +6,13 @@ import ms from 'ms';
 import { asRoute } from '../../lib/common';
 import { REDIS_URL } from '../../lib/constant/env';
 import { CacheService } from '../cache/cacheService';
-import { projectCreateSchema, projectSchema } from './projectsSchema';
+import {
+  projectCreateSchema,
+  projectSchema,
+  projectUpdateImagesSchema,
+} from './projectsSchema';
 import { ProjectsService } from './projectsService';
+import { authKeyPreHandler } from '../auth/authKeyPreHandler';
 
 export default asRoute(async function (app) {
   const projectsService = new ProjectsService(
@@ -23,40 +28,82 @@ export default asRoute(async function (app) {
     app.prismaClient,
   );
 
-  app.route({
-    method: 'POST',
-    url: '/create',
-    config: {
-      rateLimit: {
-        max: 5,
-        timeWindow: ms('5m'),
+  app
+
+    .route({
+      method: 'POST',
+      url: '/create',
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: ms('5m'),
+        },
       },
-    },
-    schema: {
-      description: 'Create a project',
-      security: [{ bearerAuth: [] }],
-      tags: ['projects'],
-      body: projectCreateSchema,
-      response: {
-        200: {
-          description: 'Created project',
-          type: 'object',
-          required: ['data'],
-          properties: {
-            data: projectSchema,
+      schema: {
+        description: 'Create a project',
+        security: [{ bearerAuth: [] }],
+        tags: ['projects'],
+        body: projectCreateSchema,
+        response: {
+          200: {
+            description: 'Created project',
+            type: 'object',
+            required: ['data'],
+            properties: {
+              data: projectSchema,
+            },
           },
         },
       },
-    },
-    async handler(
-      request: FastifyRequest<{
-        Body: FromSchema<typeof projectCreateSchema>;
-      }>,
-    ) {
-      const project = await projectsService.createProject(request.body);
-      return {
-        data: project,
-      };
-    },
-  });
+      preHandler: [authKeyPreHandler],
+      async handler(
+        request: FastifyRequest<{
+          Body: FromSchema<typeof projectCreateSchema>;
+        }>,
+      ) {
+        const project = await projectsService.createProject(request.body);
+        return {
+          data: project,
+        };
+      },
+    })
+
+    .route({
+      method: 'POST',
+      url: '/update-images',
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: ms('5m'),
+        },
+      },
+      schema: {
+        description: 'Update project images',
+        security: [{ bearerAuth: [] }],
+        tags: ['projects'],
+        body: projectUpdateImagesSchema,
+        response: {
+          200: {
+            description: 'Updated project',
+            type: 'object',
+            required: ['data'],
+            properties: {
+              data: projectSchema,
+            },
+          },
+        },
+      },
+      preHandler: [authKeyPreHandler],
+      async handler(
+        request: FastifyRequest<{
+          Body: FromSchema<typeof projectUpdateImagesSchema>;
+        }>,
+      ) {
+        const { id, ...body } = request.body;
+        const project = await projectsService.updateProjectById(id, body);
+        return {
+          data: project,
+        };
+      },
+    });
 });

@@ -88,3 +88,29 @@ export const projectCreateSchema = asJsonSchema({
     },
   },
 });
+
+export const projectUpdateImagesSchema = asJsonSchema({
+  type: 'object',
+  additionalProperties: false,
+  required: ['id'],
+  properties: {
+    id: {
+      type: 'string',
+      format: 'uuid',
+    },
+    add: {
+      type: 'array',
+      items: {
+        type: 'string',
+        format: 'uuid',
+      },
+    },
+    remove: {
+      type: 'array',
+      items: {
+        type: 'string',
+        format: 'uuid',
+      },
+    },
+  },
+});

@@ -6,7 +6,7 @@ import ms from 'ms';
 import os from 'node:os';
 import path from 'node:path';
 import { asRoute } from '../../lib/common';
-import { authPreHandler } from '../auth/authPreHandler';
+import { authKeyPreHandler } from '../auth/authKeyPreHandler';
 import {
   fileDeleteSchema,
   fileListPayloadSchema,
@@ -65,7 +65,7 @@ export default asRoute(async function (app) {
           };
         },
       ],
-      preHandler: [authPreHandler, upload.array('files', 5)],
+      preHandler: [authKeyPreHandler, upload.array('files', 5)],
       async handler(request) {
         if (request.files === undefined) {
           request.files = [];
@@ -149,7 +149,7 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preHandler: [authPreHandler],
+      preHandler: [authKeyPreHandler],
       async handler(
         request: FastifyRequest<{
           Querystring: FromSchema<typeof fileDeleteSchema>;
