@@ -25,6 +25,7 @@ export default asRoute(async function (app) {
     },
     schema: {
       description: 'Send email',
+      security: [{ bearerAuth: [] }],
       tags: ['emails'],
       body: emailSendSchema,
       response: {

@@ -108,6 +108,24 @@ export class AuthService {
     }
   }
 
+  public async revokeAuthApiKeyById(id: string): Promise<AuthApiKey> {
+    const authApiKey = await this.prismaClient.authApiKey.update({
+      where: { id },
+      data: { revoked: true },
+      select: {
+        id: true,
+        createdAt: true,
+        key: true,
+        description: true,
+        permissions: true,
+        expires: true,
+        revoked: true,
+      },
+    });
+    await this.cacheService.del(`AuthApiKey[ref:key]:${authApiKey.key}`);
+    return AuthService.serializeAuthApiKey(authApiKey);
+  }
+
   private static generateKey(): string {
     const key = generate({
       length: 29,

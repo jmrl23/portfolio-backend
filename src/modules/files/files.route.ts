@@ -99,6 +99,7 @@ export default asRoute(async function (app) {
       },
       schema: {
         description: 'Get list of files',
+        security: [{ bearerAuth: [] }],
         tags: ['files'],
         querystring: fileListPayloadSchema,
         response: {

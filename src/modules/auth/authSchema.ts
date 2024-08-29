@@ -62,3 +62,28 @@ export const authApiKeyCreateSchema = asJsonSchema({
     },
   },
 });
+
+export const authApiKeyGetInfoSchema = asJsonSchema({
+  type: 'object',
+  additionalProperties: false,
+  required: ['key'],
+  properties: {
+    key: {
+      type: 'string',
+      minLength: 32,
+      maxLength: 32,
+    },
+  },
+});
+
+export const authApiKeyRevokeSchema = asJsonSchema({
+  type: 'object',
+  additionalProperties: false,
+  required: ['id'],
+  properties: {
+    id: {
+      type: 'string',
+      format: 'uuid',
+    },
+  },
+});

@@ -23,7 +23,7 @@ export default asRoute(async function (app) {
       await caching(
         redisStore({
           url: REDIS_URL,
-          ttl: ms('10m'),
+          ttl: ms('5m'),
         }),
       ),
     ),
@@ -81,6 +81,7 @@ export default asRoute(async function (app) {
       },
       schema: {
         description: 'Get list of projects',
+        security: [{ bearerAuth: [] }],
         tags: ['projects'],
         querystring: projectListPayloadSchema,
         response: {
