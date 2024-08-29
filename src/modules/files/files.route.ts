@@ -37,7 +37,7 @@ export default asRoute(async function (app) {
       url: '/upload',
       config: {
         rateLimit: {
-          max: 5,
+          max: 20,
           timeWindow: ms('5m'),
         },
       },
