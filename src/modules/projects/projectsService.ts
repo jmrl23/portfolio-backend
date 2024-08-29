@@ -144,6 +144,9 @@ export class ProjectsService {
             mimetype: true,
             url: true,
           },
+          orderBy: {
+            createdAt: 'desc',
+          },
         },
       },
     });
