@@ -24,7 +24,7 @@ export default asRoute(async function (app) {
   const upload = multer({
     dest: path.resolve(os.tmpdir(), 'portfolio-backend'),
     limits: {
-      fileSize: 20480,
+      fileSize: 20000000,
     },
   });
 
