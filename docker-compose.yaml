@@ -4,7 +4,11 @@ services:
     environment:
       - REDIS_URL=redis://redis
       - AUTH_KEY=auth.docker
-      # - DATABASE_URL=mongodb+srv://user:password@host/portfolio?retryWrites=true&w=majority&appName=Cluster0
+      - DATABASE_URL=mongodb+srv://user:password@host/portfolio?retryWrites=true&w=majority&appName=Cluster0
+      - IMAGEKIT_PUBLIC_KEY=
+      - IMAGEKIT_PRIVATE_KEY=
+      - IMAGEKIT_URL_ENDPOINT=
+      - SMTP_URL=
     ports:
       - 3001:3001
     depends_on:
