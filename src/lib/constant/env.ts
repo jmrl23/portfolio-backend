@@ -2,6 +2,10 @@ import * as env from 'env-var';
 
 export const PORT = env.get('PORT').default(3001).asPortNumber();
 
+export const AUTH_BYPASS_ON_DEVELOPMENT =
+  env.get('AUTH_BYPASS_ON_DEVELOPMENT').default('false').asBool() === true &&
+  process.env.NODE_ENV === 'development';
+
 export const IMAGEKIT_PUBLIC_KEY = env
   .get('IMAGEKIT_PUBLIC_KEY')
   .required()
