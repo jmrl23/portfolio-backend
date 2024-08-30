@@ -3,9 +3,80 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Portfolio</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css"
+      integrity="sha512-Ya9H+OPj8NgcQk34nCrbehaA0atbzGdZCI2uCbqVRELgnlrh8vQ2INMnkadVMSniC54HChLIh5htabVuKJww8g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+      }
+
+      main {
+        min-height: 100vh;
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+    </style>
   </head>
-  <body>
-    <h1>Portfolio backend</h1>
+  <body class="markdown-body">
+    <main>
+      <h1>Portfolio</h1>
+      <p>backend landing page</p>
+      <ul>
+        <li>
+          <strong> repositories </strong>
+          <ul>
+            <li>
+              <a
+                href="https://github.com/jmrl23/portfolio"
+                target="_blank"
+                title="repo - frontend"
+                >frontend</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://github.com/jmrl23/portfolio-backend"
+                target="_blank"
+                title="repo - backend"
+                >backend</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="docs" target="_blank" title="endpoints">endpoints</a>
+        </li>
+        <li>
+          <a href="#" id="ping" title="ping">ping</a>
+        </li>
+      </ul>
+    </main>
+    <script>
+      ping.addEventListener('click', function (event) {
+        event.preventDefault();
+        try {
+          fetch('/ping')
+            .then((response) => response.text())
+            .then(alert);
+        } catch (error) {
+          console.error(error);
+          if (error instanceof Error) {
+            alert(error.stack);
+          }
+        }
+      });
+    </script>
   </body>
 </html>
