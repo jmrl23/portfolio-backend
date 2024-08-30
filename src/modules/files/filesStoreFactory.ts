@@ -1,11 +1,12 @@
 import ImageKit from 'imagekit';
+import { lookup } from 'mime-types';
+import { ReadStream } from 'node:fs';
 import {
-  IMAGEKIT_PUBLIC_KEY,
+  IMAGEKIT_FOLDER,
   IMAGEKIT_PRIVATE_KEY,
+  IMAGEKIT_PUBLIC_KEY,
   IMAGEKIT_URL_ENDPOINT,
 } from '../../lib/constant/env';
-import { ReadStream } from 'node:fs';
-import { lookup } from 'mime-types';
 
 export type FileData = string | Buffer | ReadStream;
 
@@ -38,7 +39,7 @@ export async function filesStoreFactory(store: Store): Promise<FilesStore> {
           const response = await imagekit.upload({
             file: fileData,
             fileName,
-            folder: 'portfolio',
+            folder: IMAGEKIT_FOLDER,
           });
           return {
             fileId: response.fileId,

@@ -8,6 +8,7 @@ services:
       - IMAGEKIT_PUBLIC_KEY=
       - IMAGEKIT_PRIVATE_KEY=
       - IMAGEKIT_URL_ENDPOINT=
+      - IMAGEKIT_FOLDER=
       - SMTP_URL=
     ports:
       - 3001:3001
