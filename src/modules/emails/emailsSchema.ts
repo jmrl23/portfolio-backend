@@ -2,26 +2,29 @@ import { asJsonSchema } from '../../lib/common';
 import { SMTP_URL } from '../../lib/constant/env';
 
 const smtp = new URL(SMTP_URL);
+const email = decodeURIComponent(smtp.username);
 export const emailSendSchema = asJsonSchema({
   type: 'object',
   additionalProperties: false,
-  required: ['to', 'subject'],
   properties: {
     from: {
       type: 'string',
-      examples: [decodeURIComponent(smtp.username)],
+      examples: [email],
+      default: email,
     },
     to: {
       type: 'array',
       items: {
         type: 'string',
         format: 'email',
-        examples: ['gaiterajomariel@gmail.com'],
+        examples: [email],
+        default: [email],
       },
     },
     subject: {
       type: 'string',
       examples: ['portfolio'],
+      default: 'portfolio',
     },
     text: {
       type: 'string',
