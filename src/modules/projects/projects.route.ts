@@ -180,7 +180,7 @@ export default asRoute(async function (app) {
 
     .route({
       method: 'PATCH',
-      url: '/update-images',
+      url: '/:id/images/update',
       config: {
         rateLimit: {
           max: 5,
@@ -191,7 +191,8 @@ export default asRoute(async function (app) {
         description: 'Update project images',
         security: [{ bearerAuth: [] }],
         tags: ['projects'],
-        body: projectUpdateImagesSchema,
+        params: projectUpdateImagesSchema.properties.params,
+        body: projectUpdateImagesSchema.properties.body,
         response: {
           200: {
             description: 'Updated project',
@@ -206,11 +207,16 @@ export default asRoute(async function (app) {
       preHandler: [authApiPermissionHandler('projects.write')],
       async handler(
         request: FastifyRequest<{
-          Body: FromSchema<typeof projectUpdateImagesSchema>;
+          Params: FromSchema<
+            typeof projectUpdateImagesSchema.properties.params
+          >;
+          Body: FromSchema<typeof projectUpdateImagesSchema.properties.body>;
         }>,
       ) {
-        const { id, ...body } = request.body;
-        const project = await projectsService.updateProjectImagesById(id, body);
+        const project = await projectsService.updateProjectImagesById(
+          request.params.id,
+          request.body,
+        );
         return {
           data: project,
         };
