@@ -38,6 +38,7 @@ export async function filesStoreFactory(store: Store): Promise<FilesStore> {
           const response = await imagekit.upload({
             file: fileData,
             fileName,
+            folder: 'portfolio',
           });
           return {
             fileId: response.fileId,

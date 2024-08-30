@@ -1,10 +1,14 @@
 import redisStore from '@jmrl23/redis-store';
 import { caching } from 'cache-manager';
 import { FastifyRequest } from 'fastify';
+import multer from 'fastify-multer';
 import { FromSchema } from 'json-schema-to-ts';
 import ms from 'ms';
+import os from 'node:os';
+import path from 'node:path';
 import { asRoute } from '../../lib/common';
 import { REDIS_URL } from '../../lib/constant/env';
+import { authApiPermissionHandler } from '../auth/authPreHandler';
 import { CacheService } from '../cache/cacheService';
 import {
   projectCreateSchema,
@@ -15,7 +19,6 @@ import {
   projectUpdateSchema,
 } from './projectsSchema';
 import { ProjectsService } from './projectsService';
-import { authApiPermissionHandler } from '../auth/authPreHandler';
 
 export default asRoute(async function (app) {
   const projectsService = new ProjectsService(
@@ -29,6 +32,15 @@ export default asRoute(async function (app) {
     ),
     app.prismaClient,
   );
+
+  const upload = multer({
+    dest: path.resolve(os.tmpdir(), 'portfolio-backend'),
+    limits: {
+      fileSize: 20000000,
+    },
+  });
+
+  await app.register(multer.contentParser);
 
   app
 
@@ -45,6 +57,7 @@ export default asRoute(async function (app) {
         description: 'Create a project',
         security: [{ bearerAuth: [] }],
         tags: ['projects'],
+        consumes: ['multipart/form-data'],
         body: projectCreateSchema,
         response: {
           200: {
@@ -57,13 +70,26 @@ export default asRoute(async function (app) {
           },
         },
       },
+      preValidation: [upload.array('images', 20)],
       preHandler: [authApiPermissionHandler('projects.write')],
       async handler(
         request: FastifyRequest<{
           Body: FromSchema<typeof projectCreateSchema>;
         }>,
       ) {
-        const project = await projectsService.createProject(request.body);
+        if (request.files === undefined) {
+          request.files = [];
+        }
+        const responses = await Promise.allSettled(
+          request.files.map((file) => this.filesService.uploadFile(file)),
+        );
+        const images = responses
+          .filter((response) => response.status === 'fulfilled')
+          .map((response) => response.value);
+        const project = await projectsService.createProject({
+          ...request.body,
+          images: images.map((image) => image.id),
+        });
         return {
           data: project,
         };
