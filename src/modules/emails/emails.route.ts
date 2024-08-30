@@ -19,8 +19,8 @@ export default asRoute(async function (app) {
     url: '/send',
     config: {
       rateLimit: {
-        max: 5,
-        timeWindow: ms('5m'),
+        max: 10,
+        timeWindow: ms('10m'),
       },
     },
     schema: {

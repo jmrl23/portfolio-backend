@@ -18,8 +18,8 @@ export default asRoute(async function (app) {
       url: '/create',
       config: {
         rateLimit: {
-          max: 5,
-          timeWindow: ms('5m'),
+          max: 20,
+          timeWindow: ms('10m'),
         },
       },
       schema: {
@@ -56,8 +56,8 @@ export default asRoute(async function (app) {
       url: '/:key',
       config: {
         rateLimit: {
-          max: 60,
-          timeWindow: ms('1m'),
+          max: 300,
+          timeWindow: ms('5m'),
         },
       },
       schema: {
@@ -97,7 +97,7 @@ export default asRoute(async function (app) {
       config: {
         rateLimit: {
           max: 20,
-          timeWindow: ms('5m'),
+          timeWindow: ms('10m'),
         },
       },
       schema: {
