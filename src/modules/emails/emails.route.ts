@@ -4,7 +4,7 @@ import ms from 'ms';
 import { createTransport } from 'nodemailer';
 import { asRoute } from '../../lib/common';
 import { SMTP_URL } from '../../lib/constant/env';
-import { emailSendSchema } from './emailsSchema';
+import { emailSendSchema, emailSentSchema } from './emailsSchema';
 import { EmailsService } from './emailsService';
 import { authApiPermissionHandler } from '../auth/authPreHandler';
 
@@ -34,14 +34,7 @@ export default asRoute(async function (app) {
           type: 'object',
           required: ['data'],
           properties: {
-            data: {
-              type: 'object',
-              additionalProperties: false,
-              required: ['messageId'],
-              messageId: {
-                type: 'string',
-              },
-            },
+            data: emailSentSchema,
           },
         },
       },
@@ -52,11 +45,9 @@ export default asRoute(async function (app) {
         Body: FromSchema<typeof emailSendSchema>;
       }>,
     ) {
-      const messageId = await emailsService.sendMail(request.body);
+      const sentEmail = await emailsService.sendMail(request.body);
       return {
-        data: {
-          messageId,
-        },
+        data: sentEmail,
       };
     },
   });
