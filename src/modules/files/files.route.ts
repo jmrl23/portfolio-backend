@@ -37,8 +37,8 @@ export default asRoute(async function (app) {
       url: '/upload',
       config: {
         rateLimit: {
-          max: 20,
-          timeWindow: ms('5m'),
+          max: 50,
+          timeWindow: ms('30m'),
         },
       },
       schema: {
@@ -81,8 +81,8 @@ export default asRoute(async function (app) {
       url: '/',
       config: {
         rateLimit: {
-          max: 60,
-          timeWindow: ms('1m'),
+          max: 300,
+          timeWindow: ms('5m'),
         },
       },
       schema: {
@@ -122,8 +122,8 @@ export default asRoute(async function (app) {
       url: '/delete',
       config: {
         rateLimit: {
-          max: 15,
-          timeWindow: ms('1m'),
+          max: 50,
+          timeWindow: ms('30m'),
         },
       },
       schema: {

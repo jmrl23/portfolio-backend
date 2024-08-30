@@ -49,8 +49,8 @@ export default asRoute(async function (app) {
       url: '/create',
       config: {
         rateLimit: {
-          max: 5,
-          timeWindow: ms('5m'),
+          max: 50,
+          timeWindow: ms('30m'),
         },
       },
       schema: {
@@ -101,8 +101,8 @@ export default asRoute(async function (app) {
       url: '/',
       config: {
         rateLimit: {
-          max: 60,
-          timeWindow: ms('1m'),
+          max: 300,
+          timeWindow: ms('5m'),
         },
       },
       schema: {
@@ -144,7 +144,7 @@ export default asRoute(async function (app) {
       url: '/update',
       config: {
         rateLimit: {
-          max: 5,
+          max: 10,
           timeWindow: ms('5m'),
         },
       },
@@ -183,7 +183,7 @@ export default asRoute(async function (app) {
       url: '/:id/images/update',
       config: {
         rateLimit: {
-          max: 5,
+          max: 10,
           timeWindow: ms('5m'),
         },
       },
@@ -229,7 +229,7 @@ export default asRoute(async function (app) {
       config: {
         rateLimit: {
           max: 50,
-          timeWindow: ms('5m'),
+          timeWindow: ms('30m'),
         },
       },
       schema: {
