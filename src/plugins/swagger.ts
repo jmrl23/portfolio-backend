@@ -28,7 +28,7 @@ export default fastifyPlugin(async function (app) {
 
     servers.unshift({
       url,
-      description: 'Production server URL',
+      description: 'Production server',
     });
   }
 
