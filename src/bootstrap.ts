@@ -1,18 +1,19 @@
 import fastifyCors from '@fastify/cors';
 import fastifyEtag from '@fastify/etag';
 import fastifyMiddie from '@fastify/middie';
+import fastifyRateLimit from '@fastify/rate-limit';
 import fastifyStatic from '@fastify/static';
 import { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import { NotFound } from 'http-errors';
+import ms from 'ms';
 import path from 'node:path';
 import { logger } from './lib/common';
+import { CORS_ORIGIN } from './lib/constant/env';
+import globalServices from './plugins/globalServices';
+import prismaClient from './plugins/prismaClient';
 import routes from './plugins/routes';
 import swagger from './plugins/swagger';
-import globalServices from './plugins/globalServices';
-import fastifyRateLimit from '@fastify/rate-limit';
-import ms from 'ms';
-import prismaClient from './plugins/prismaClient';
 
 export default fastifyPlugin(async function (app) {
   await app.register(fastifyEtag);
@@ -20,7 +21,7 @@ export default fastifyPlugin(async function (app) {
   await app.register(fastifyMiddie);
 
   await app.register(fastifyCors, {
-    origin: '*',
+    origin: CORS_ORIGIN,
   });
 
   await app.register(fastifyRateLimit, {
