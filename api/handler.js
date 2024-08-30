@@ -1,5 +1,7 @@
 const fastify = require('fastify');
-const app = fastify();
+const app = fastify({
+  ignoreTrailingSlash: true,
+});
 /** @type {import('fastify-plugin').default} */
 const bootstrap = require('../build/bootstrap');
 
