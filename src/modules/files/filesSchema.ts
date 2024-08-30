@@ -32,7 +32,6 @@ export const fileSchema = asJsonSchema({
 export const fileUploadSchema = asJsonSchema({
   type: 'object',
   additionalProperties: false,
-  required: ['files'],
   properties: {
     files: {
       type: 'array',

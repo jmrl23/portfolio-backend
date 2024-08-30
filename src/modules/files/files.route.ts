@@ -61,29 +61,17 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preValidation: [
-        async function (request) {
-          request.body = {
-            files: [],
-          };
-        },
-      ],
-      preHandler: [
-        authApiPermissionHandler('files.write'),
-        upload.array('files', 5),
-      ],
+      preValidation: [upload.array('files', 5)],
+      preHandler: [authApiPermissionHandler('files.write')],
       async handler(request) {
-        if (request.files === undefined) {
-          request.files = [];
-        }
         const responses = await Promise.allSettled(
           request.files.map((file) => this.filesService.uploadFile(file)),
         );
-        const successfulUploads = responses
+        const files = responses
           .filter((response) => response.status === 'fulfilled')
           .map((response) => response.value);
         return {
-          data: successfulUploads,
+          data: files,
         };
       },
     })
