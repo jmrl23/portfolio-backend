@@ -2,7 +2,7 @@ services:
   web:
     build: .
     environment:
-      - CORS_ORIGIN='*'
+      - CORS_ORIGIN=*
       - REDIS_URL=redis://redis
       - AUTH_KEY=auth.docker
       - DATABASE_URL=mongodb+srv://user:password@host/portfolio?retryWrites=true&w=majority&appName=Cluster0
