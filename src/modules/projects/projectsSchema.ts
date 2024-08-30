@@ -186,24 +186,37 @@ export const projectUpdateSchema = asJsonSchema({
 export const projectUpdateImagesSchema = asJsonSchema({
   type: 'object',
   additionalProperties: false,
-  required: ['id'],
+  required: ['params', 'body'],
   properties: {
-    id: {
-      type: 'string',
-      format: 'uuid',
-    },
-    add: {
-      type: 'array',
-      items: {
-        type: 'string',
-        format: 'uuid',
+    params: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id'],
+      properties: {
+        id: {
+          type: 'string',
+          format: 'uuid',
+        },
       },
     },
-    remove: {
-      type: 'array',
-      items: {
-        type: 'string',
-        format: 'uuid',
+    body: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        connect: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'uuid',
+          },
+        },
+        disconnect: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'uuid',
+          },
+        },
       },
     },
   },

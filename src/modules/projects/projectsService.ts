@@ -199,14 +199,14 @@ export class ProjectsService {
 
   public async updateProjectImagesById(
     id: string,
-    body: Omit<FromSchema<typeof projectUpdateImagesSchema>, 'id'>,
+    body: FromSchema<typeof projectUpdateImagesSchema.properties.body>,
   ): Promise<Project> {
     const updatedProject = await this.prismaClient.project.update({
       where: { id },
       data: {
         images: {
-          connect: body.add?.map((imageId) => ({ id: imageId })),
-          disconnect: body.remove?.map((imageId) => ({ id: imageId })),
+          connect: body.connect?.map((imageId) => ({ id: imageId })),
+          disconnect: body.disconnect?.map((imageId) => ({ id: imageId })),
         },
       },
       select: {
