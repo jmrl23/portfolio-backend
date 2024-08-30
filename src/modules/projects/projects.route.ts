@@ -54,14 +54,14 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'Create a project',
+        description: 'create project',
         security: [{ bearerAuth: [] }],
         tags: ['projects'],
         consumes: ['multipart/form-data'],
         body: projectCreateSchema,
         response: {
           200: {
-            description: 'Created project',
+            description: 'project',
             type: 'object',
             required: ['data'],
             properties: {
@@ -106,13 +106,13 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'Get list of projects',
+        description: 'get projects',
         security: [{ bearerAuth: [] }],
         tags: ['projects'],
         querystring: projectListPayloadSchema,
         response: {
           200: {
-            description: 'List of projects',
+            description: 'projects',
             type: 'object',
             required: ['data'],
             properties: {
@@ -149,13 +149,13 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'Update project',
+        description: 'update project',
         security: [{ bearerAuth: [] }],
         tags: ['projects'],
         body: projectUpdateSchema,
         response: {
           200: {
-            description: 'Updated project',
+            description: 'project',
             type: 'object',
             required: ['data'],
             properties: {
@@ -188,14 +188,14 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'Update project images',
+        description: 'update project images',
         security: [{ bearerAuth: [] }],
         tags: ['projects'],
         params: projectUpdateImagesSchema.properties.params,
         body: projectUpdateImagesSchema.properties.body,
         response: {
           200: {
-            description: 'Updated project',
+            description: 'project',
             type: 'object',
             required: ['data'],
             properties: {
@@ -233,13 +233,13 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'Delete a project',
+        description: 'delete project',
         security: [{ bearerAuth: [] }],
         tags: ['projects'],
         params: projectDeleteSchema,
         response: {
           200: {
-            description: 'Deleted project',
+            description: 'project',
             type: 'object',
             required: ['data'],
             properties: {

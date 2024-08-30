@@ -42,14 +42,14 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'Upload files',
+        description: 'upload files',
         security: [{ bearerAuth: [] }],
         tags: ['files'],
         consumes: ['multipart/form-data'],
         body: fileUploadSchema,
         response: {
           200: {
-            description: 'List of uploaded files',
+            description: 'files',
             type: 'object',
             required: ['data'],
             properties: {
@@ -86,13 +86,13 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'Get list of files',
+        description: 'get files',
         security: [{ bearerAuth: [] }],
         tags: ['files'],
         querystring: fileListPayloadSchema,
         response: {
           200: {
-            description: 'List of files',
+            description: 'files',
             type: 'object',
             required: ['data'],
             properties: {
@@ -127,13 +127,13 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'Delete files',
+        description: 'delete files',
         security: [{ bearerAuth: [] }],
         tags: ['files'],
         querystring: fileDeleteSchema,
         response: {
           200: {
-            description: 'List of deleted files',
+            description: 'files',
             type: 'object',
             required: ['data'],
             properties: {

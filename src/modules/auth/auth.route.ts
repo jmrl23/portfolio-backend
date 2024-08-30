@@ -23,13 +23,13 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'Create api key',
+        description: 'create auth api key',
         security: [{ bearerAuth: [] }],
         tags: ['auth'],
         body: authApiKeyCreateSchema,
         response: {
           200: {
-            description: 'Auth api key',
+            description: 'auth api key',
             type: 'object',
             required: ['data'],
             properties: {
@@ -61,13 +61,13 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'Get api key info',
+        description: 'auth api key',
         security: [{ bearerAuth: [] }],
         tags: ['auth'],
         params: authApiKeyGetInfoSchema,
         response: {
           200: {
-            description: 'Auth api key',
+            description: 'auth api key',
             type: 'object',
             required: ['data'],
             properties: {
@@ -101,13 +101,13 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'Revoke API key',
+        description: 'revoke auth api key',
         security: [{ bearerAuth: [] }],
         tags: ['auth'],
         params: authApiKeyRevokeSchema,
         response: {
           200: {
-            description: 'Auth api key',
+            description: 'auth api key',
             type: 'object',
             required: ['data'],
             properties: {

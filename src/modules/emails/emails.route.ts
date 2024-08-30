@@ -24,13 +24,13 @@ export default asRoute(async function (app) {
       },
     },
     schema: {
-      description: 'Send email',
+      description: 'send email',
       security: [{ bearerAuth: [] }],
       tags: ['emails'],
       body: emailSendSchema,
       response: {
         200: {
-          description: 'Send email info',
+          description: 'sent email info',
           type: 'object',
           required: ['data'],
           properties: {
