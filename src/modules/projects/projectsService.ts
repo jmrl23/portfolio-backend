@@ -22,7 +22,9 @@ export class ProjectsService {
   ) {}
 
   public async createProject(
-    body: FromSchema<typeof projectCreateSchema>,
+    body: Omit<FromSchema<typeof projectCreateSchema>, 'images'> & {
+      readonly images: string[];
+    },
   ): Promise<Project> {
     const existingProject = await this.prismaClient.project.findUnique({
       where: { name: body.name },

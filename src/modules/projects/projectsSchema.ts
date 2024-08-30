@@ -82,9 +82,10 @@ export const projectCreateSchema = asJsonSchema({
     },
     images: {
       type: 'array',
+      maxItems: 20,
       items: {
         type: 'string',
-        format: 'uuid',
+        format: 'binary',
       },
     },
   },
