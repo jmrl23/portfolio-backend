@@ -55,7 +55,7 @@ these are the options on making things ready
 
 ## References
 
-- [fastify template](https://github.com/jmrl23/fastify-tempalte)
+- [fastify-template](https://github.com/jmrl23/fastify-template)
 - [cache-manager](https://www.npmjs.com/package/cache-manager)
 - [Uniform Resource Identifier](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier)
 - [google app passwords](https://myaccount.google.com/apppasswords)
