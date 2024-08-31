@@ -172,7 +172,7 @@ export default asRoute(async function (app) {
 
     .route({
       method: 'PATCH',
-      url: '/:id/images/update',
+      url: '/images/update/:id',
       config: {
         rateLimit: {
           max: 10,
