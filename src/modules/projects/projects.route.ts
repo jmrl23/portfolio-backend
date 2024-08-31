@@ -31,6 +31,7 @@ export default asRoute(async function (app) {
       ),
     ),
     app.prismaClient,
+    app.filesService,
   );
 
   const upload = multer({
@@ -77,18 +78,9 @@ export default asRoute(async function (app) {
           Body: FromSchema<typeof projectCreateSchema>;
         }>,
       ) {
-        if (request.files === undefined) {
-          request.files = [];
-        }
-        const responses = await Promise.allSettled(
-          request.files.map((file) => this.filesService.uploadFile(file)),
-        );
-        const images = responses
-          .filter((response) => response.status === 'fulfilled')
-          .map((response) => response.value);
         const project = await projectsService.createProject({
           ...request.body,
-          images: images.map((image) => image.id),
+          images: request.files,
         });
         return {
           data: project,
