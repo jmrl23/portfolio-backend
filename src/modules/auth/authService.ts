@@ -129,9 +129,14 @@ export class AuthService {
   private static generateKey(): string {
     const key = generate({
       length: 29,
-      capitalization: 'lowercase',
-      charset: 'hex',
-    });
+    })
+      .split('')
+      .map((c) => {
+        const isUppercase = !Math.round(Math.random());
+        if (isUppercase) return c.toUpperCase();
+        return c;
+      })
+      .join('');
 
     return `sk-${key}`;
   }
