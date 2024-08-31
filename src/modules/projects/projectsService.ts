@@ -44,10 +44,13 @@ export class ProjectsService {
 
     if (existingProject) throw new Conflict('Project already exists');
 
-    const uploadResponse = await Promise.allSettled(
-      body.images.map((file) => this.filesService.uploadFile(file)),
+    const imageFiles = body.images.filter((file) =>
+      file.mimetype.startsWith('image'),
     );
-    const uploadedImages = uploadResponse
+    const uploadResponse = await Promise.allSettled(
+      imageFiles.map((file) => this.filesService.uploadFile(file)),
+    );
+    const images = uploadResponse
       .filter((response) => response.status === 'fulfilled')
       .map((response) => response.value);
 
@@ -59,7 +62,7 @@ export class ProjectsService {
         previewUrl: body.previewUrl,
         topics: body.topics,
         images: {
-          connect: uploadedImages.map((image) => ({ id: image.id })),
+          connect: images.map((image) => ({ id: image.id })),
         },
       },
       select: {
