@@ -183,6 +183,7 @@ export default asRoute(async function (app) {
         description: 'update project images',
         security: [{ bearerAuth: [] }],
         tags: ['projects'],
+        consumes: ['multipart/form-data'],
         params: projectUpdateImagesSchema.properties.params,
         body: projectUpdateImagesSchema.properties.body,
         response: {
@@ -196,6 +197,7 @@ export default asRoute(async function (app) {
           },
         },
       },
+      preValidation: [upload.array('upload', 20)],
       preHandler: [authApiPermissionHandler('projects.write')],
       async handler(
         request: FastifyRequest<{
@@ -207,7 +209,7 @@ export default asRoute(async function (app) {
       ) {
         const project = await projectsService.updateProjectImagesById(
           request.params.id,
-          request.body,
+          { ...request.body, upload: request.files },
         );
         return {
           data: project,

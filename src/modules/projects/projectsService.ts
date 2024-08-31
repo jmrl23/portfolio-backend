@@ -11,6 +11,8 @@ import {
   projectUpdateImagesSchema,
   projectUpdateSchema,
 } from './projectsSchema';
+import { fileSchema } from '../files/filesSchema';
+import { NotFound } from 'http-errors';
 
 type Project = FromSchema<typeof projectSchema>;
 
@@ -25,9 +27,12 @@ type ProjectListPayload = FromSchema<typeof projectListPayloadSchema>;
 
 type ProjectUpdateBody = Omit<FromSchema<typeof projectUpdateSchema>, 'id'>;
 
-type ProjectUpdateImagesBody = FromSchema<
-  typeof projectUpdateImagesSchema.properties.body
->;
+type ProjectUpdateImagesBody = Omit<
+  FromSchema<typeof projectUpdateImagesSchema.properties.body>,
+  'upload'
+> & {
+  readonly upload: File[];
+};
 
 export class ProjectsService {
   constructor(
@@ -44,16 +49,7 @@ export class ProjectsService {
 
     if (existingProject) throw new Conflict('Project already exists');
 
-    const imageFiles = body.images.filter((file) =>
-      file.mimetype.startsWith('image'),
-    );
-    const uploadResponse = await Promise.allSettled(
-      imageFiles.map((file) => this.filesService.uploadFile(file)),
-    );
-    const images = uploadResponse
-      .filter((response) => response.status === 'fulfilled')
-      .map((response) => response.value);
-
+    const images = await this.uploadImages(body.images);
     const createdProject = await this.prismaClient.project.create({
       data: {
         name: body.name,
@@ -222,12 +218,12 @@ export class ProjectsService {
     id: string,
     body: ProjectUpdateImagesBody,
   ): Promise<Project> {
+    const images = await this.uploadImages(body.upload);
     const updatedProject = await this.prismaClient.project.update({
       where: { id },
       data: {
         images: {
-          connect: body.connect?.map((imageId) => ({ id: imageId })),
-          disconnect: body.disconnect?.map((imageId) => ({ id: imageId })),
+          connect: images.map((image) => ({ id: image.id })),
         },
       },
       select: {
@@ -251,10 +247,32 @@ export class ProjectsService {
       },
     });
 
+    const imagesToRemove = updatedProject.images
+      .map((image) => image.id)
+      .filter((id) => body.remove?.includes(id));
+    await Promise.all(
+      imagesToRemove.map((fileId) => this.filesService.deleteFileById(fileId)),
+    );
+
+    for (const imageId of imagesToRemove) {
+      const idx = updatedProject.images.findIndex(
+        (image) => image.id === imageId,
+      );
+      if (idx > -1) {
+        updatedProject.images.splice(idx, 1);
+      }
+    }
+
     return ProjectsService.serializeProject(updatedProject);
   }
 
   public async deleteProjectById(id: string): Promise<Project> {
+    const existingProject = await this.prismaClient.project.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (!existingProject) throw new NotFound('Project not found');
+
     const project = await this.prismaClient.project.delete({
       where: {
         id,
@@ -279,6 +297,11 @@ export class ProjectsService {
         },
       },
     });
+
+    const imageIds = project.images.map((image) => image.id);
+    await Promise.all(
+      imageIds.map((id) => this.filesService.deleteFileById(id)),
+    );
     return ProjectsService.serializeProject(project);
   }
 
@@ -311,5 +334,20 @@ export class ProjectsService {
       updatedAt: project.updatedAt.toISOString(),
       images: project.images.map((image) => FilesService.serializeFile(image)),
     };
+  }
+
+  public async uploadImages(
+    files: File[],
+  ): Promise<FromSchema<typeof fileSchema>[]> {
+    const imageFiles = files.filter((file) =>
+      file.mimetype.startsWith('image'),
+    );
+    const uploadedImageFiles = await Promise.allSettled(
+      imageFiles.map((image) => this.filesService.uploadFile(image)),
+    );
+    const images = uploadedImageFiles
+      .filter((response) => response.status === 'fulfilled')
+      .map((response) => response.value);
+    return images;
   }
 }

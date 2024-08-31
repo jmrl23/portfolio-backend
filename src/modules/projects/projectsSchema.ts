@@ -203,18 +203,19 @@ export const projectUpdateImagesSchema = asJsonSchema({
       type: 'object',
       additionalProperties: false,
       properties: {
-        connect: {
+        upload: {
           type: 'array',
+          maxItems: 20,
           items: {
             type: 'string',
-            format: 'uuid',
+            format: 'binary',
           },
         },
-        disconnect: {
+        remove: {
           type: 'array',
+          description: "id of the project's image",
           items: {
             type: 'string',
-            format: 'uuid',
           },
         },
       },
