@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client';
+import { File } from 'fastify-multer/lib/interfaces';
 import { Conflict } from 'http-errors';
 import { FromSchema } from 'json-schema-to-ts';
 import { CacheService } from '../cache/cacheService';
@@ -13,25 +14,42 @@ import {
 
 type Project = FromSchema<typeof projectSchema>;
 
+type ProjectCreateBody = Omit<
+  FromSchema<typeof projectCreateSchema>,
+  'images'
+> & {
+  readonly images: File[];
+};
+
 type ProjectListPayload = FromSchema<typeof projectListPayloadSchema>;
+
+type ProjectUpdateBody = Omit<FromSchema<typeof projectUpdateSchema>, 'id'>;
+
+type ProjectUpdateImagesBody = FromSchema<
+  typeof projectUpdateImagesSchema.properties.body
+>;
 
 export class ProjectsService {
   constructor(
     private readonly cacheService: CacheService,
     private readonly prismaClient: PrismaClient,
+    private readonly filesService: FilesService,
   ) {}
 
-  public async createProject(
-    body: Omit<FromSchema<typeof projectCreateSchema>, 'images'> & {
-      readonly images: string[];
-    },
-  ): Promise<Project> {
+  public async createProject(body: ProjectCreateBody): Promise<Project> {
     const existingProject = await this.prismaClient.project.findUnique({
       where: { name: body.name },
       select: { id: true },
     });
 
     if (existingProject) throw new Conflict('Project already exists');
+
+    const uploadResponse = await Promise.allSettled(
+      body.images.map((file) => this.filesService.uploadFile(file)),
+    );
+    const uploadedImages = uploadResponse
+      .filter((response) => response.status === 'fulfilled')
+      .map((response) => response.value);
 
     const createdProject = await this.prismaClient.project.create({
       data: {
@@ -41,7 +59,7 @@ export class ProjectsService {
         previewUrl: body.previewUrl,
         topics: body.topics,
         images: {
-          connect: body.images?.map((imageId) => ({ id: imageId })),
+          connect: uploadedImages.map((image) => ({ id: image.id })),
         },
       },
       select: {
@@ -162,7 +180,7 @@ export class ProjectsService {
 
   public async updateProjectById(
     id: string,
-    body: Omit<FromSchema<typeof projectUpdateSchema>, 'id'>,
+    body: ProjectUpdateBody,
   ): Promise<Project> {
     const updatedProject = await this.prismaClient.project.update({
       where: { id },
@@ -199,7 +217,7 @@ export class ProjectsService {
 
   public async updateProjectImagesById(
     id: string,
-    body: FromSchema<typeof projectUpdateImagesSchema.properties.body>,
+    body: ProjectUpdateImagesBody,
   ): Promise<Project> {
     const updatedProject = await this.prismaClient.project.update({
       where: { id },
