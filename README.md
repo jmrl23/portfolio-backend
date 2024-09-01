@@ -40,6 +40,12 @@ these are the options on making things ready
   - update project
   - fetch (list of projects)
   - delete project
+- [testaments](./src/modules/testaments/)
+  - generate testament key
+    - strategy to prevent spams
+  - create testament
+  - fetch (list of testaments)
+  - delete testament
 
 ## Scripts
 
@@ -52,6 +58,10 @@ these are the options on making things ready
 | start:prod | start on production mode (must build first) |
 | format     | format codes (prettier)                     |
 | lint       | lint codes (eslint)                         |
+
+## Extras
+
+- [frontend repository](https://github.com/jmrl23/portfolio)
 
 ## References
 
