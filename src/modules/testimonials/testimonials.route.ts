@@ -7,7 +7,7 @@ import ms from 'ms';
 import os from 'node:os';
 import path from 'node:path';
 import { asRoute } from '../../lib/common';
-import { REDIS_URL } from '../../lib/constant/env';
+import { CORS_ORIGIN, REDIS_URL } from '../../lib/constant/env';
 import { authApiPermissionHandler } from '../auth/authPreHandler';
 import { CacheService } from '../cache/cacheService';
 import {
@@ -112,9 +112,22 @@ export default asRoute(async function (app) {
             required: ['data'],
             properties: {
               data: {
-                type: 'string',
-                minLength: 6,
-                maxLength: 6,
+                type: 'object',
+                required: ['key', 'links'],
+                properties: {
+                  key: {
+                    type: 'string',
+                    minLength: 6,
+                    maxLength: 6,
+                  },
+                  links: {
+                    type: 'array',
+                    items: {
+                      type: 'string',
+                      format: 'uri',
+                    },
+                  },
+                },
               },
             },
           },
@@ -123,8 +136,15 @@ export default asRoute(async function (app) {
       preHandler: [authApiPermissionHandler('testimonials.write')],
       async handler() {
         const key = await testimonialsService.generateKey();
+        const links = CORS_ORIGIN.map((origin) => {
+          if (origin === '*') origin = 'http://localhost:300';
+          if (origin.endsWith('/')) {
+            origin = origin.substring(0, origin.length - 1);
+          }
+          return `${origin}/testimonials/create/${key}`;
+        });
         return {
-          data: key,
+          data: { key, links },
         };
       },
     })
