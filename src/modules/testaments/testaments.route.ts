@@ -103,6 +103,7 @@ export default asRoute(async function (app) {
       },
       schema: {
         description: 'generate testament key',
+        security: [{ bearerAuth: [] }],
         tags: ['testaments'],
         response: {
           200: {
