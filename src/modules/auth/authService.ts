@@ -13,6 +13,9 @@ export const permissions = [
   'projects.write',
   'projects.delete',
   'emails.write',
+  'testaments.read',
+  'testaments.write',
+  'testaments.delete',
 ] as const;
 
 export type Permission = (typeof permissions)[number];
