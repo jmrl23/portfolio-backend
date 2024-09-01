@@ -1,7 +1,7 @@
 import { asJsonSchema } from '../../lib/common';
 import { fileSchema } from '../files/filesSchema';
 
-export const testamentSchema = asJsonSchema({
+export const testimonialSchema = asJsonSchema({
   type: 'object',
   additionalProperties: false,
   required: ['id', 'createdAt', 'author', 'bio', 'content', 'image'],
@@ -31,7 +31,7 @@ export const testamentSchema = asJsonSchema({
   },
 });
 
-export const testamentCreateSchema = asJsonSchema({
+export const testimonialCreateSchema = asJsonSchema({
   type: 'object',
   additionalProperties: false,
   required: ['author', 'content', 'key'],
@@ -60,7 +60,7 @@ export const testamentCreateSchema = asJsonSchema({
   },
 });
 
-export const testamentListPayloadSchema = asJsonSchema({
+export const testimonialListPayloadSchema = asJsonSchema({
   type: 'object',
   additionalProperties: false,
   properties: {
@@ -114,7 +114,7 @@ export const testamentListPayloadSchema = asJsonSchema({
   },
 });
 
-export const testamentDeleteSchema = asJsonSchema({
+export const testimonialDeleteSchema = asJsonSchema({
   type: 'object',
   additionalProperties: false,
   required: ['id'],

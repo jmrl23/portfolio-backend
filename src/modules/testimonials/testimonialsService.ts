@@ -6,33 +6,35 @@ import { generate } from 'randomstring';
 import { CacheService } from '../cache/cacheService';
 import { FilesService } from '../files/filesService';
 import {
-  testamentCreateSchema,
-  testamentListPayloadSchema,
-  testamentSchema,
-} from './testamentsSchema';
+  testimonialCreateSchema,
+  testimonialListPayloadSchema,
+  testimonialSchema,
+} from './testimonialsSchema';
 import ms from 'ms';
 
-type Testament = FromSchema<typeof testamentSchema>;
+type Testimonial = FromSchema<typeof testimonialSchema>;
 
-type TestamentCreateBody = Omit<
-  FromSchema<typeof testamentCreateSchema>,
+type TestimonialCreateBody = Omit<
+  FromSchema<typeof testimonialCreateSchema>,
   'image'
 > & {
   readonly image?: File;
   readonly key: string;
 };
 
-type TestamentListByPayload = FromSchema<typeof testamentListPayloadSchema>;
+type TestimonialListByPayload = FromSchema<typeof testimonialListPayloadSchema>;
 
-export class TestamentsService {
+export class TestimonialsService {
   constructor(
     private readonly cacheService: CacheService,
     private readonly filesService: FilesService,
     private readonly prismaClient: PrismaClient,
   ) {}
 
-  public async createTestament(body: TestamentCreateBody): Promise<Testament> {
-    const key = `TestamentKey[ref:generator]:${body.key}`;
+  public async createTestimonial(
+    body: TestimonialCreateBody,
+  ): Promise<Testimonial> {
+    const key = `TestimonialKey[ref:generator]:${body.key}`;
     const isKeyAuthorized = await this.cacheService.get<string>(key);
     if (isKeyAuthorized === undefined) {
       throw Unauthorized('Invalid key');
@@ -49,7 +51,7 @@ export class TestamentsService {
       imageId = image.id;
     }
 
-    const testament = await this.prismaClient.testament.create({
+    const testimonial = await this.prismaClient.testimonial.create({
       data: {
         author: body.author,
         bio: body.bio,
@@ -76,13 +78,13 @@ export class TestamentsService {
     });
 
     await this.cacheService.del(key);
-    return TestamentsService.serializeTestament(testament);
+    return TestimonialsService.serializeTestimonial(testimonial);
   }
 
-  public async getTestamentsByPayload(
-    payload: TestamentListByPayload,
-  ): Promise<Testament[]> {
-    const cacheKey = `Testaments:[ref:payload]:(${JSON.stringify([
+  public async getTestimonialsByPayload(
+    payload: TestimonialListByPayload,
+  ): Promise<Testimonial[]> {
+    const cacheKey = `Testimonials:[ref:payload]:(${JSON.stringify([
       payload.createdAtFrom,
       payload.createdAtTo,
       payload.updatedAtFrom,
@@ -100,10 +102,10 @@ export class TestamentsService {
       await this.cacheService.del(cacheKey);
     }
 
-    const cachedData = await this.cacheService.get<Testament[]>(cacheKey);
+    const cachedData = await this.cacheService.get<Testimonial[]>(cacheKey);
     if (cachedData !== undefined) return cachedData;
 
-    const testaments = await this.prismaClient.testament.findMany({
+    const testimonials = await this.prismaClient.testimonial.findMany({
       where: {
         createdAt: {
           gte: payload.createdAtFrom,
@@ -142,21 +144,21 @@ export class TestamentsService {
       },
     });
 
-    const testamentList: Testament[] = testaments.map((testament) =>
-      TestamentsService.serializeTestament(testament),
+    const testimonialList: Testimonial[] = testimonials.map((testimonial) =>
+      TestimonialsService.serializeTestimonial(testimonial),
     );
-    await this.cacheService.set(cacheKey, testamentList, ms('5m'));
-    return testamentList;
+    await this.cacheService.set(cacheKey, testimonialList, ms('5m'));
+    return testimonialList;
   }
 
-  public async deleteTestamentById(id: string): Promise<Testament> {
-    const existingTestament = await this.prismaClient.testament.findUnique({
+  public async deleteTestimonialById(id: string): Promise<Testimonial> {
+    const existingTestimonial = await this.prismaClient.testimonial.findUnique({
       where: { id },
       select: { id: true },
     });
-    if (!existingTestament) throw new NotFound('Testament not found');
+    if (!existingTestimonial) throw new NotFound('Testimonial not found');
 
-    const testament = await this.prismaClient.testament.delete({
+    const testimonial = await this.prismaClient.testimonial.delete({
       where: { id },
       select: {
         id: true,
@@ -176,7 +178,7 @@ export class TestamentsService {
         },
       },
     });
-    return TestamentsService.serializeTestament(testament);
+    return TestimonialsService.serializeTestimonial(testimonial);
   }
 
   public async generateKey(): Promise<string> {
@@ -190,12 +192,12 @@ export class TestamentsService {
         return c;
       })
       .join('');
-    await this.cacheService.set(`TestamentKey[ref:generator]:${key}`, key);
+    await this.cacheService.set(`TestimonialKey[ref:generator]:${key}`, key);
     return key;
   }
 
-  public static serializeTestament(
-    testament: Prisma.TestamentGetPayload<{
+  public static serializeTestimonial(
+    testimonial: Prisma.TestimonialGetPayload<{
       select: {
         id: true;
         createdAt: true;
@@ -214,12 +216,12 @@ export class TestamentsService {
         };
       };
     }>,
-  ): Testament {
+  ): Testimonial {
     return {
-      ...testament,
-      createdAt: testament.createdAt.toISOString(),
-      image: testament.image
-        ? FilesService.serializeFile(testament.image)
+      ...testimonial,
+      createdAt: testimonial.createdAt.toISOString(),
+      image: testimonial.image
+        ? FilesService.serializeFile(testimonial.image)
         : null,
     };
   }

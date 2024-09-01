@@ -11,12 +11,12 @@ import { REDIS_URL } from '../../lib/constant/env';
 import { authApiPermissionHandler } from '../auth/authPreHandler';
 import { CacheService } from '../cache/cacheService';
 import {
-  testamentCreateSchema,
-  testamentDeleteSchema,
-  testamentListPayloadSchema,
-  testamentSchema,
-} from './testamentsSchema';
-import { TestamentsService } from './testamentsService';
+  testimonialCreateSchema,
+  testimonialDeleteSchema,
+  testimonialListPayloadSchema,
+  testimonialSchema,
+} from './testimonialsSchema';
+import { TestimonialsService } from './testimonialsService';
 import { File } from 'fastify-multer/lib/interfaces';
 
 declare module 'fastify' {
@@ -26,12 +26,12 @@ declare module 'fastify' {
 }
 
 export default asRoute(async function (app) {
-  const testamentsService = new TestamentsService(
+  const testimonialsService = new TestimonialsService(
     new CacheService(
       await caching(
         redisStore({
           url: REDIS_URL,
-          prefix: 'Portfolio:TestamentsService',
+          prefix: 'Portfolio:TestimonialsService',
           ttl: ms('7d'),
         }),
       ),
@@ -61,17 +61,17 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'create testament',
-        tags: ['testaments'],
+        description: 'create testimonial',
+        tags: ['testimonials'],
         consumes: ['multipart/form-data'],
-        body: testamentCreateSchema,
+        body: testimonialCreateSchema,
         response: {
           200: {
-            description: 'testament',
+            description: 'testimonial',
             type: 'object',
             required: ['data'],
             properties: {
-              data: testamentSchema,
+              data: testimonialSchema,
             },
           },
         },
@@ -79,15 +79,15 @@ export default asRoute(async function (app) {
       preValidation: [upload.single('image')],
       async handler(
         request: FastifyRequest<{
-          Body: FromSchema<typeof testamentCreateSchema>;
+          Body: FromSchema<typeof testimonialCreateSchema>;
         }>,
       ) {
-        const testament = await testamentsService.createTestament({
+        const testimonial = await testimonialsService.createTestimonial({
           ...request.body,
           image: request.file,
         });
         return {
-          data: testament,
+          data: testimonial,
         };
       },
     })
@@ -102,12 +102,12 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'generate testament key',
+        description: 'generate testimonial key',
         security: [{ bearerAuth: [] }],
-        tags: ['testaments'],
+        tags: ['testimonials'],
         response: {
           200: {
-            description: 'testament',
+            description: 'testimonial',
             type: 'object',
             required: ['data'],
             properties: {
@@ -120,9 +120,9 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preHandler: [authApiPermissionHandler('testaments.write')],
+      preHandler: [authApiPermissionHandler('testimonials.write')],
       async handler() {
-        const key = await testamentsService.generateKey();
+        const key = await testimonialsService.generateKey();
         return {
           data: key,
         };
@@ -139,35 +139,35 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'get testaments',
+        description: 'get testimonials',
         security: [{ bearerAuth: [] }],
-        tags: ['testaments'],
-        querystring: testamentListPayloadSchema,
+        tags: ['testimonials'],
+        querystring: testimonialListPayloadSchema,
         response: {
           200: {
-            description: 'testaments',
+            description: 'testimonials',
             type: 'object',
             required: ['data'],
             properties: {
               data: {
                 type: 'array',
-                items: testamentSchema,
+                items: testimonialSchema,
               },
             },
           },
         },
       },
-      preHandler: [authApiPermissionHandler('testaments.read')],
+      preHandler: [authApiPermissionHandler('testimonials.read')],
       async handler(
         request: FastifyRequest<{
-          Querystring: FromSchema<typeof testamentListPayloadSchema>;
+          Querystring: FromSchema<typeof testimonialListPayloadSchema>;
         }>,
       ) {
-        const testaments = await testamentsService.getTestamentsByPayload(
+        const testimonials = await testimonialsService.getTestimonialsByPayload(
           request.query,
         );
         return {
-          data: testaments,
+          data: testimonials,
         };
       },
     })
@@ -182,32 +182,32 @@ export default asRoute(async function (app) {
         },
       },
       schema: {
-        description: 'delete testament',
+        description: 'delete testimonial',
         security: [{ bearerAuth: [] }],
-        tags: ['testaments'],
-        querystring: testamentDeleteSchema,
+        tags: ['testimonials'],
+        params: testimonialDeleteSchema,
         response: {
           200: {
-            description: 'testament',
+            description: 'testimonial',
             type: 'object',
             required: ['data'],
             properties: {
-              data: testamentSchema,
+              data: testimonialSchema,
             },
           },
         },
       },
-      preHandler: [authApiPermissionHandler('testaments.delete')],
+      preHandler: [authApiPermissionHandler('testimonials.delete')],
       async handler(
         request: FastifyRequest<{
-          Params: FromSchema<typeof testamentDeleteSchema>;
+          Params: FromSchema<typeof testimonialDeleteSchema>;
         }>,
       ) {
-        const testament = await testamentsService.deleteTestamentById(
+        const testimonial = await testimonialsService.deleteTestimonialById(
           request.params.id,
         );
         return {
-          data: testament,
+          data: testimonial,
         };
       },
     });

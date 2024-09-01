@@ -20,7 +20,7 @@ model File {
   Project   Project? @relation(fields: [projectId], references: [id])
   projectId String?
 
-  Testament Testament[]
+  Testimonial Testimonial[]
 }
 
 model Project {
@@ -47,7 +47,7 @@ model AuthApiKey {
   revoked     Boolean   @default(false)
 }
 
-model Testament {
+model Testimonial {
   id        String   @id @default(uuid()) @map("_id")
   createdAt DateTime @default(now())
 
