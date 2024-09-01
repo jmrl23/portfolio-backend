@@ -40,12 +40,12 @@ these are the options on making things ready
   - update project
   - fetch (list of projects)
   - delete project
-- [testaments](./src/modules/testaments/)
-  - generate testament key
+- [testimonials](./src/modules/testimonials/)
+  - generate testimonial key
     - strategy to prevent spams
-  - create testament
-  - fetch (list of testaments)
-  - delete testament
+  - create testimonial
+  - fetch (list of testimonials)
+  - delete testimonial
 
 ## Scripts
 
