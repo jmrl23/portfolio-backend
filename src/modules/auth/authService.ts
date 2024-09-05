@@ -109,7 +109,7 @@ export class AuthService {
       const expires = new Date(info.expires);
       const now = new Date();
 
-      if (now <= expires) {
+      if (now >= expires) {
         throw new Unauthorized('API key expired');
       }
     }
