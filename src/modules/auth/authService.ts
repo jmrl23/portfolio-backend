@@ -1,11 +1,12 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import { Unauthorized } from 'http-errors';
+import { Unauthorized, Forbidden } from 'http-errors';
 import { FromSchema } from 'json-schema-to-ts';
 import { generate } from 'randomstring';
 import { CacheService } from '../cache/cacheService';
 import { authApiKeyCreateSchema, authApiKeySchema } from './authSchema';
 
 export const permissions = [
+  'auth.grantall',
   'files.read',
   'files.write',
   'files.delete',
@@ -17,6 +18,8 @@ export const permissions = [
   'testimonials.write',
   'testimonials.delete',
 ] as const;
+
+const grantAll = permissions[0];
 
 export type Permission = (typeof permissions)[number];
 
@@ -36,6 +39,13 @@ export class AuthService {
       where: { key },
     });
     if (existingKey) return await this.createAuthApiKey(payload);
+
+    // grant all access should have expiration
+    if (payload.permissions.includes(grantAll)) {
+      if (payload.expires === undefined) {
+        throw new Forbidden('Grant all access should have an expiration');
+      }
+    }
 
     const authApiKey = await this.prismaClient.authApiKey.create({
       data: {
@@ -103,6 +113,8 @@ export class AuthService {
         throw new Unauthorized('API key expired');
       }
     }
+
+    if (info.permissions.includes(grantAll)) return;
 
     for (const permission of permissions) {
       if (!info.permissions.includes(permission)) {
