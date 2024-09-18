@@ -1,16 +1,15 @@
 import ImageKit from 'imagekit';
-import { lookup } from 'mime-types';
 import { ReadStream } from 'node:fs';
 import {
-  IMAGEKIT_FOLDER,
   IMAGEKIT_PRIVATE_KEY,
   IMAGEKIT_PUBLIC_KEY,
   IMAGEKIT_URL_ENDPOINT,
 } from '../../lib/constant/env';
+import { ImagekitStore } from './stores/imagekitStore';
 
 export type FileData = string | Buffer | ReadStream;
 
-interface FileInfo {
+export interface FileInfo {
   fileId: string;
   name: string;
   size: number;
@@ -28,32 +27,22 @@ type Store = 'imagekit';
 export async function filesStoreFactory(store: Store): Promise<FilesStore> {
   switch (store) {
     case 'imagekit':
+      const requiredOptions = [
+        IMAGEKIT_PUBLIC_KEY,
+        IMAGEKIT_PRIVATE_KEY,
+        IMAGEKIT_URL_ENDPOINT,
+      ];
+
+      if (requiredOptions.includes(undefined)) {
+        throw new Error('Missing imagekit required option');
+      }
+
       const imagekit = new ImageKit({
-        publicKey: IMAGEKIT_PUBLIC_KEY,
-        privateKey: IMAGEKIT_PRIVATE_KEY,
-        urlEndpoint: IMAGEKIT_URL_ENDPOINT,
+        publicKey: IMAGEKIT_PUBLIC_KEY!,
+        privateKey: IMAGEKIT_PRIVATE_KEY!,
+        urlEndpoint: IMAGEKIT_URL_ENDPOINT!,
       });
 
-      return {
-        async upload(fileData, fileName) {
-          const response = await imagekit.upload({
-            file: fileData,
-            fileName,
-            folder: IMAGEKIT_FOLDER,
-          });
-          return {
-            fileId: response.fileId,
-            name: response.name,
-            size: response.size,
-            mimetype: lookup(response.name) || 'application/octet-stream',
-            url: response.url,
-          };
-        },
-
-        async delete(fileId) {
-          await imagekit.deleteFile(fileId);
-          return fileId;
-        },
-      };
+      return new ImagekitStore(imagekit);
   }
 }
