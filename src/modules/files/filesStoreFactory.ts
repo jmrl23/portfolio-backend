@@ -1,5 +1,5 @@
 import { ReadStream } from 'node:fs';
-import { ImageKitStore } from './stores/imagekitStore';
+import { ImageKitStore } from './stores/imagKitStore';
 
 export type FileData = string | Buffer | ReadStream;
 
