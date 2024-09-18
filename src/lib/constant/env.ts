@@ -8,19 +8,12 @@ export const AUTH_BYPASS_ON_DEVELOPMENT =
   env.get('AUTH_BYPASS_ON_DEVELOPMENT').default('false').asBool() === true &&
   process.env.NODE_ENV === 'development';
 
-export const IMAGEKIT_PUBLIC_KEY = env
-  .get('IMAGEKIT_PUBLIC_KEY')
-  .required()
-  .asString();
+export const IMAGEKIT_PUBLIC_KEY = env.get('IMAGEKIT_PUBLIC_KEY').asString();
 
-export const IMAGEKIT_PRIVATE_KEY = env
-  .get('IMAGEKIT_PRIVATE_KEY')
-  .required()
-  .asString();
+export const IMAGEKIT_PRIVATE_KEY = env.get('IMAGEKIT_PRIVATE_KEY').asString();
 
 export const IMAGEKIT_URL_ENDPOINT = env
   .get('IMAGEKIT_URL_ENDPOINT')
-  .required()
   .asString();
 
 export const IMAGEKIT_FOLDER = env.get('IMAGEKIT_FOLDER').asString();
