@@ -6,9 +6,9 @@ backend server for portfolio website
 
 ## Quickstart
 
-these are the options on making things ready
+options on making things ready
 
-- standalone (nodejs)
+- standalone (node.js)
 
   1. make a `.env` file and fill out the required variables
   1. run build (only if you wish to run the production/ build version)
@@ -22,7 +22,7 @@ these are the options on making things ready
 ## Features
 
 - [cache](./src/modules/cache/)
-  - optimized by cache
+  - endpoints optimized by cache
   - uses redis under the hood
 - [auth](./src/modules/auth/)
   - generate api key
@@ -32,20 +32,15 @@ these are the options on making things ready
   - send email using SMTP
 - [files](./src/modules/files/)
   - [factory](./src/modules/files/filesStoreFactory.ts)
-    - upload file
-    - delete file
-  - fetch (list of files)
+    - upload & delete
+    - custom files store
+  - CRUD operation
 - [projects](./src/modules/projects/)
-  - create project
-  - update project
-  - fetch (list of projects)
-  - delete project
+  - CRUD operation
 - [testimonials](./src/modules/testimonials/)
   - generate testimonial key
     - strategy to prevent spams
-  - create testimonial
-  - fetch (list of testimonials)
-  - delete testimonial
+  - CRUD operation
 
 ## Scripts
 
