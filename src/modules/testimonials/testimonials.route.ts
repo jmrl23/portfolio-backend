@@ -2,6 +2,7 @@ import redisStore from '@jmrl23/redis-store';
 import { caching } from 'cache-manager';
 import { FastifyRequest } from 'fastify';
 import multer from 'fastify-multer';
+import { File } from 'fastify-multer/lib/interfaces';
 import { FromSchema } from 'json-schema-to-ts';
 import ms from 'ms';
 import os from 'node:os';
@@ -17,7 +18,6 @@ import {
   testimonialSchema,
 } from './testimonialsSchema';
 import { TestimonialsService } from './testimonialsService';
-import { File } from 'fastify-multer/lib/interfaces';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -137,7 +137,7 @@ export default asRoute(async function (app) {
       async handler() {
         const key = await testimonialsService.generateKey();
         const links = CORS_ORIGIN.map((origin) => {
-          if (origin === '*') origin = 'http://localhost:300';
+          if (origin === '*') origin = 'http://localhost:3000';
           if (origin.endsWith('/')) {
             origin = origin.substring(0, origin.length - 1);
           }
