@@ -28,31 +28,12 @@ export default fastifyPlugin(async function (app) {
   );
 
   const filesService = new FilesService(
-    new CacheService(
-      await caching(
-        redisStore({
-          url: REDIS_URL,
-          prefix: 'Portfolio:[Global]:FilesService',
-          ttl: ms('5m'),
-        }),
-      ),
-    ),
+    cacheService,
     await filesStoreFactory('imagekit'),
     app.prismaClient,
   );
 
-  const authService = new AuthService(
-    new CacheService(
-      await caching(
-        redisStore({
-          url: REDIS_URL,
-          prefix: 'Portfolio:[Global]:AuthService',
-          ttl: ms('5m'),
-        }),
-      ),
-    ),
-    app.prismaClient,
-  );
+  const authService = new AuthService(cacheService, app.prismaClient);
 
   app.decorate('cacheService', cacheService);
   app.decorate('filesService', filesService);

@@ -13,6 +13,7 @@ import {
 } from './projectsSchema';
 import { fileSchema } from '../files/filesSchema';
 import { NotFound } from 'http-errors';
+import ms from 'ms';
 
 type Project = FromSchema<typeof projectSchema>;
 
@@ -88,7 +89,7 @@ export class ProjectsService {
   public async getProjectsByPayload(
     payload: ProjectListPayload,
   ): Promise<Project[]> {
-    const cacheKey = `Projects:[ref:payload]:(${JSON.stringify([
+    const cacheKey = `ProjectsService:Projects:[ref:payload]:(${JSON.stringify([
       payload.createdAtFrom,
       payload.createdAtTo,
       payload.updatedAtFrom,
@@ -173,7 +174,7 @@ export class ProjectsService {
     const projectList: Project[] = projects.map((project) =>
       ProjectsService.serializeProject(project),
     );
-    await this.cacheService.set(cacheKey, projectList);
+    await this.cacheService.set(cacheKey, projectList, ms('5m'));
     return projectList;
   }
 

@@ -1,5 +1,3 @@
-import redisStore from '@jmrl23/redis-store';
-import { caching } from 'cache-manager';
 import { FastifyRequest } from 'fastify';
 import multer from 'fastify-multer';
 import { FromSchema } from 'json-schema-to-ts';
@@ -7,9 +5,7 @@ import ms from 'ms';
 import os from 'node:os';
 import path from 'node:path';
 import { asRoute } from '../../lib/common';
-import { REDIS_URL } from '../../lib/constant/env';
 import { authApiPermissionHandler } from '../auth/authPreHandler';
-import { CacheService } from '../cache/cacheService';
 import {
   projectCreateSchema,
   projectDeleteSchema,
@@ -22,14 +18,7 @@ import { ProjectsService } from './projectsService';
 
 export default asRoute(async function (app) {
   const projectsService = new ProjectsService(
-    new CacheService(
-      await caching(
-        redisStore({
-          url: REDIS_URL,
-          ttl: ms('5m'),
-        }),
-      ),
-    ),
+    app.cacheService,
     app.prismaClient,
     app.filesService,
   );

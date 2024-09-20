@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import { CacheService } from '../cache/cacheService';
 import { fileListPayloadSchema, fileSchema } from './filesSchema';
 import { FilesStore } from './filesStoreFactory';
+import ms from 'ms';
 
 type FileInfo = FromSchema<typeof fileSchema>;
 
@@ -57,7 +58,7 @@ export class FilesService {
   public async getFilesByPayload(
     payload: FileListPayload,
   ): Promise<FileInfo[]> {
-    const cacheKey = `Files:[payload]:(${JSON.stringify([
+    const cacheKey = `FilesService:Files:[payload]:(${JSON.stringify([
       payload.createdAtFrom,
       payload.createdAtTo,
       payload.skip,
@@ -110,7 +111,7 @@ export class FilesService {
     const fileList: FileInfo[] = files.map((file) =>
       FilesService.serializeFile(file),
     );
-    await this.cacheService.set(cacheKey, fileList);
+    await this.cacheService.set(cacheKey, fileList, ms('5m'));
     return fileList;
   }
 

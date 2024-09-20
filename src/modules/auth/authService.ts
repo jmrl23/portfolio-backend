@@ -4,6 +4,7 @@ import { FromSchema } from 'json-schema-to-ts';
 import { generate } from 'randomstring';
 import { CacheService } from '../cache/cacheService';
 import { authApiKeyCreateSchema, authApiKeySchema } from './authSchema';
+import ms from 'ms';
 
 export const permissions = [
   'auth.grantall',
@@ -69,7 +70,7 @@ export class AuthService {
   }
 
   public async getAuthApiKeyInfoByKey(key: string): Promise<AuthApiKey> {
-    const cacheKey = `AuthApiKey[ref:key]:${key}`;
+    const cacheKey = `AuthService:AuthApiKey[ref:key]:${key}`;
     const cachedData = await this.cacheService.get<AuthApiKey | null>(cacheKey);
     if (cachedData !== undefined) {
       if (cachedData === null) throw new Unauthorized('Invalid api key');
@@ -88,7 +89,7 @@ export class AuthService {
         revoked: true,
       },
     });
-    await this.cacheService.set(cacheKey, authApiKey);
+    await this.cacheService.set(cacheKey, authApiKey, ms('5m'));
 
     if (!authApiKey) throw new Unauthorized('Invalid api key');
 
