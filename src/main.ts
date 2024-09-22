@@ -13,7 +13,7 @@ async function main() {
   app.listen({
     host,
     port,
-    listenTextResolver: () => `listening on port ${port}`,
+    listenTextResolver: (address) => `server listening at ${address}`,
   });
 }
 

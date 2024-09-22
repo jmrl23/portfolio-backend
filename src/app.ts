@@ -2,7 +2,7 @@ import fastify from 'fastify';
 import logger from './lib/common/logger';
 
 const app = fastify({
-  logger,
+  loggerInstance: logger,
   ignoreTrailingSlash: true,
 });
 
