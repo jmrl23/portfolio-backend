@@ -71,7 +71,6 @@ export default asRoute(async function (app) {
           ...request.body,
           image: files[0],
         });
-        await request.cleanRequestFiles();
         return {
           data: testimonial,
         };

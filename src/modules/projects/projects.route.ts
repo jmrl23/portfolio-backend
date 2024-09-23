@@ -65,7 +65,6 @@ export default asRoute(async function (app) {
           ...request.body,
           images: files,
         });
-        await request.cleanRequestFiles();
         return {
           data: project,
         };
@@ -181,6 +180,11 @@ export default asRoute(async function (app) {
           },
         },
       },
+      preValidation: [
+        filesFieldsMultiple(['upload'], {
+          files: 15,
+        }),
+      ],
       preHandler: [authApiPermissionHandler('projects.write')],
       async handler(
         request: FastifyRequest<{
@@ -195,7 +199,6 @@ export default asRoute(async function (app) {
           request.params.id,
           { ...request.body, upload: files },
         );
-        await request.cleanRequestFiles();
         return {
           data: project,
         };
