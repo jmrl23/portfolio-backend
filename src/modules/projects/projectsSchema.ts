@@ -32,6 +32,7 @@ export const projectSchema = asJsonSchema({
     },
     description: {
       type: 'string',
+      nullable: true,
     },
     repositoryUrl: {
       type: 'string',
@@ -58,13 +59,14 @@ export const projectSchema = asJsonSchema({
 export const projectCreateSchema = asJsonSchema({
   type: 'object',
   additionalProperties: false,
-  required: ['name', 'description', 'repositoryUrl'],
+  required: ['name', 'repositoryUrl'],
   properties: {
     name: {
       type: 'string',
     },
     description: {
       type: 'string',
+      nullable: true,
     },
     repositoryUrl: {
       type: 'string',

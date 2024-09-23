@@ -1,12 +1,8 @@
 import redisStore from '@jmrl23/redis-store';
 import { caching } from 'cache-manager';
 import { FastifyRequest } from 'fastify';
-import multer from 'fastify-multer';
-import { File } from 'fastify-multer/lib/interfaces';
 import { FromSchema } from 'json-schema-to-ts';
 import ms from 'ms';
-import os from 'node:os';
-import path from 'node:path';
 import { asRoute } from '../../lib/common';
 import { CORS_ORIGIN, REDIS_URL } from '../../lib/constant/env';
 import { authApiPermissionHandler } from '../auth/authPreHandler';
@@ -18,12 +14,7 @@ import {
   testimonialSchema,
 } from './testimonialsSchema';
 import { TestimonialsService } from './testimonialsService';
-
-declare module 'fastify' {
-  interface FastifyRequest {
-    file: File;
-  }
-}
+import { filesFieldsSingle } from '../files/filesHandlers';
 
 export default asRoute(async function (app) {
   const testimonialsService = new TestimonialsService(
@@ -39,15 +30,6 @@ export default asRoute(async function (app) {
     app.filesService,
     app.prismaClient,
   );
-
-  const upload = multer({
-    dest: path.resolve(os.tmpdir(), 'portfolio-backend'),
-    limits: {
-      fileSize: 20000000,
-    },
-  });
-
-  await app.register(multer.contentParser);
 
   app
 
@@ -76,16 +58,20 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preValidation: [upload.single('image')],
+      preValidation: [filesFieldsSingle(['image'])],
       async handler(
         request: FastifyRequest<{
           Body: FromSchema<typeof testimonialCreateSchema>;
         }>,
       ) {
+        const files = await request.saveRequestFiles({
+          limits: { files: 1 },
+        });
         const testimonial = await testimonialsService.createTestimonial({
           ...request.body,
-          image: request.file,
+          image: files[0],
         });
+        await request.cleanRequestFiles();
         return {
           data: testimonial,
         };

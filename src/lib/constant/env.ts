@@ -27,3 +27,5 @@ export const PRODUCTION_URL =
 export const AUTH_KEY = env.get('AUTH_KEY').required().asString();
 
 export const SMTP_URL = env.get('SMTP_URL').required().asUrlString();
+
+export const GITHUB_USERNAME = env.get('GITHUB_USERNAME').asString();

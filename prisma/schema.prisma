@@ -29,7 +29,7 @@ model Project {
   updatedAt DateTime @updatedAt
 
   name          String   @unique
-  description   String
+  description   String?
   repositoryUrl String
   previewUrl    String?
   topics        String[] @default([])

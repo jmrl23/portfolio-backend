@@ -1,9 +1,6 @@
 import { FastifyRequest } from 'fastify';
-import multer from 'fastify-multer';
 import { FromSchema } from 'json-schema-to-ts';
 import ms from 'ms';
-import os from 'node:os';
-import path from 'node:path';
 import { asRoute } from '../../lib/common';
 import { authApiPermissionHandler } from '../auth/authPreHandler';
 import {
@@ -15,6 +12,7 @@ import {
   projectUpdateSchema,
 } from './projectsSchema';
 import { ProjectsService } from './projectsService';
+import { filesFieldsMultiple } from '../files/filesHandlers';
 
 export default asRoute(async function (app) {
   const projectsService = new ProjectsService(
@@ -22,15 +20,6 @@ export default asRoute(async function (app) {
     app.prismaClient,
     app.filesService,
   );
-
-  const upload = multer({
-    dest: path.resolve(os.tmpdir(), 'portfolio-backend'),
-    limits: {
-      fileSize: 20000000,
-    },
-  });
-
-  await app.register(multer.contentParser);
 
   app
 
@@ -60,17 +49,23 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preValidation: [upload.array('images', 20)],
+      preValidation: [
+        filesFieldsMultiple(['images'], {
+          files: 20,
+        }),
+      ],
       preHandler: [authApiPermissionHandler('projects.write')],
       async handler(
         request: FastifyRequest<{
           Body: FromSchema<typeof projectCreateSchema>;
         }>,
       ) {
+        const files = await request.saveRequestFiles();
         const project = await projectsService.createProject({
           ...request.body,
-          images: request.files,
+          images: files,
         });
+        await request.cleanRequestFiles();
         return {
           data: project,
         };
@@ -186,7 +181,6 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preValidation: [upload.array('upload', 20)],
       preHandler: [authApiPermissionHandler('projects.write')],
       async handler(
         request: FastifyRequest<{
@@ -196,10 +190,12 @@ export default asRoute(async function (app) {
           Body: FromSchema<typeof projectUpdateImagesSchema.properties.body>;
         }>,
       ) {
+        const files = await request.saveRequestFiles();
         const project = await projectsService.updateProjectImagesById(
           request.params.id,
-          { ...request.body, upload: request.files },
+          { ...request.body, upload: files },
         );
+        await request.cleanRequestFiles();
         return {
           data: project,
         };

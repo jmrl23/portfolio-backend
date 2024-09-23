@@ -11,6 +11,7 @@ import path from 'node:path';
 import { logger } from './lib/common';
 import { CORS_ORIGIN } from './lib/constant/env';
 import globalServices from './plugins/globalServices';
+import multipart from './plugins/multipart';
 import prismaClient from './plugins/prismaClient';
 import routes from './plugins/routes';
 import swagger from './plugins/swagger';
@@ -28,6 +29,8 @@ export default fastifyPlugin(async function (app) {
     max: 50,
     timeWindow: ms('1m'),
   });
+
+  await app.register(multipart);
 
   await app.register(swagger);
 

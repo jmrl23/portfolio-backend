@@ -1,5 +1,4 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import { File } from 'fastify-multer/lib/interfaces';
 import { BadRequest, Unauthorized, NotFound } from 'http-errors';
 import { FromSchema } from 'json-schema-to-ts';
 import { generate } from 'randomstring';
@@ -11,14 +10,15 @@ import {
   testimonialSchema,
 } from './testimonialsSchema';
 import ms from 'ms';
+import { SavedMultipartFile } from '@fastify/multipart';
 
-type Testimonial = FromSchema<typeof testimonialSchema>;
+export type Testimonial = FromSchema<typeof testimonialSchema>;
 
-type TestimonialCreateBody = Omit<
+export type TestimonialCreateBody = Omit<
   FromSchema<typeof testimonialCreateSchema>,
   'image'
 > & {
-  readonly image?: File;
+  readonly image?: SavedMultipartFile;
   readonly key: string;
 };
 

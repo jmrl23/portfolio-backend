@@ -1,35 +1,17 @@
 import { FastifyRequest } from 'fastify';
-import multer from 'fastify-multer';
-import { File } from 'fastify-multer/lib/interfaces';
 import { FromSchema } from 'json-schema-to-ts';
 import ms from 'ms';
-import os from 'node:os';
-import path from 'node:path';
 import { asRoute } from '../../lib/common';
+import { authApiPermissionHandler } from '../auth/authPreHandler';
+import { filesFieldsMultiple } from './filesHandlers';
 import {
   fileDeleteSchema,
   fileListPayloadSchema,
   fileSchema,
   fileUploadSchema,
 } from './filesSchema';
-import { authApiPermissionHandler } from '../auth/authPreHandler';
-
-declare module 'fastify' {
-  interface FastifyRequest {
-    files: File[];
-  }
-}
 
 export default asRoute(async function (app) {
-  const upload = multer({
-    dest: path.resolve(os.tmpdir(), 'portfolio-backend'),
-    limits: {
-      fileSize: 20000000,
-    },
-  });
-
-  await app.register(multer.contentParser);
-
   app
 
     .route({
@@ -61,17 +43,22 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preValidation: [upload.array('files', 5)],
+      preValidation: [
+        filesFieldsMultiple(['files'], {
+          files: 5,
+        }),
+      ],
       preHandler: [authApiPermissionHandler('files.write')],
       async handler(request) {
+        const files = await request.saveRequestFiles();
         const responses = await Promise.allSettled(
-          request.files.map((file) => this.filesService.uploadFile(file)),
+          files.map((file) => this.filesService.uploadFile(file)),
         );
-        const files = responses
+        const uploadedFiles = responses
           .filter((response) => response.status === 'fulfilled')
           .map((response) => response.value);
         return {
-          data: files,
+          data: uploadedFiles,
         };
       },
     })

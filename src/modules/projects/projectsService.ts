@@ -1,8 +1,11 @@
+import { SavedMultipartFile } from '@fastify/multipart';
 import { Prisma, PrismaClient } from '@prisma/client';
-import { File } from 'fastify-multer/lib/interfaces';
-import { Conflict } from 'http-errors';
+import { Conflict, NotFound } from 'http-errors';
 import { FromSchema } from 'json-schema-to-ts';
+import ms from 'ms';
+import { GITHUB_USERNAME } from '../../lib/constant/env';
 import { CacheService } from '../cache/cacheService';
+import { fileSchema } from '../files/filesSchema';
 import { FilesService } from '../files/filesService';
 import {
   projectCreateSchema,
@@ -11,9 +14,6 @@ import {
   projectUpdateImagesSchema,
   projectUpdateSchema,
 } from './projectsSchema';
-import { fileSchema } from '../files/filesSchema';
-import { NotFound } from 'http-errors';
-import ms from 'ms';
 
 type Project = FromSchema<typeof projectSchema>;
 
@@ -21,7 +21,7 @@ type ProjectCreateBody = Omit<
   FromSchema<typeof projectCreateSchema>,
   'images'
 > & {
-  readonly images: File[];
+  readonly images: SavedMultipartFile[];
 };
 
 type ProjectListPayload = FromSchema<typeof projectListPayloadSchema>;
@@ -32,7 +32,7 @@ type ProjectUpdateImagesBody = Omit<
   FromSchema<typeof projectUpdateImagesSchema.properties.body>,
   'upload'
 > & {
-  readonly upload: File[];
+  readonly upload: SavedMultipartFile[];
 };
 
 export class ProjectsService {
@@ -49,6 +49,19 @@ export class ProjectsService {
     });
 
     if (existingProject) throw new Conflict('Project already exists');
+
+    if (GITHUB_USERNAME && !body.description) {
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${encodeURIComponent(GITHUB_USERNAME)}/${encodeURIComponent(body.name)}`,
+        );
+        const data = await response.json();
+        const description = data.description ?? null;
+        body.description = description;
+      } catch {
+        // just try adding description from github if not present
+      }
+    }
 
     const images = await this.uploadImages(body.images);
     const createdProject = await this.prismaClient.project.create({
@@ -338,7 +351,7 @@ export class ProjectsService {
   }
 
   public async uploadImages(
-    files: File[],
+    files: SavedMultipartFile[],
   ): Promise<FromSchema<typeof fileSchema>[]> {
     const imageFiles = files.filter((file) =>
       file.mimetype.startsWith('image'),

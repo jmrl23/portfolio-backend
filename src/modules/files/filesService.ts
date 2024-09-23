@@ -1,16 +1,16 @@
+import { SavedMultipartFile } from '@fastify/multipart';
 import { Prisma, PrismaClient } from '@prisma/client';
-import { File } from 'fastify-multer/lib/interfaces';
 import { InternalServerError } from 'http-errors';
 import { FromSchema } from 'json-schema-to-ts';
+import ms from 'ms';
 import fs from 'node:fs';
 import { CacheService } from '../cache/cacheService';
 import { fileListPayloadSchema, fileSchema } from './filesSchema';
 import { FilesStore } from './filesStoreFactory';
-import ms from 'ms';
 
-type FileInfo = FromSchema<typeof fileSchema>;
+export type FileInfo = FromSchema<typeof fileSchema>;
 
-type FileListPayload = FromSchema<typeof fileListPayloadSchema>;
+export type FileListPayload = FromSchema<typeof fileListPayloadSchema>;
 
 export class FilesService {
   constructor(
@@ -19,16 +19,13 @@ export class FilesService {
     private readonly prismaClient: PrismaClient,
   ) {}
 
-  public async uploadFile(file: File): Promise<FileInfo> {
-    if (!file.path) {
+  public async uploadFile(file: SavedMultipartFile): Promise<FileInfo> {
+    if (!file.filepath) {
       throw InternalServerError('an error occurs while uploading a file');
     }
 
-    const fileData = fs.readFileSync(file.path);
-    const uploadedFile = await this.filesStore.upload(
-      fileData,
-      file.originalname,
-    );
+    const fileData = fs.readFileSync(file.filepath);
+    const uploadedFile = await this.filesStore.upload(fileData, file.filename);
     const createdFile = await this.prismaClient.file.create({
       data: uploadedFile,
     });
