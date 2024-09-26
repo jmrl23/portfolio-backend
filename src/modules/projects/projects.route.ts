@@ -184,6 +184,17 @@ export default asRoute(async function (app) {
         filesFieldsMultiple(['upload'], {
           files: 15,
         }),
+        async (request) => {
+          // TODO: create utility to prevent hax like this
+          const body = request.body as Record<string, any>;
+          if (!body) return;
+          if (!Array.isArray(body.remove)) {
+            body.remove = body.remove.value ? [body.remove.value] : [];
+            return;
+          }
+          body.remove = body.remove.map((item: any) => item.value);
+          console.log(body);
+        },
       ],
       preHandler: [authApiPermissionHandler('projects.write')],
       async handler(
@@ -194,6 +205,7 @@ export default asRoute(async function (app) {
           Body: FromSchema<typeof projectUpdateImagesSchema.properties.body>;
         }>,
       ) {
+        console.log('remove', request.body.remove);
         const files = await request.saveRequestFiles();
         const project = await projectsService.updateProjectImagesById(
           request.params.id,
