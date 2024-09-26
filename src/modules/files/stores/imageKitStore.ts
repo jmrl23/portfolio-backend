@@ -6,9 +6,9 @@ import {
   IMAGEKIT_PUBLIC_KEY,
   IMAGEKIT_URL_ENDPOINT,
 } from '../../../lib/constant/env';
-import { FileData, FileInfo, FilesStore } from '../filesStoreFactory';
+import { FileInfo, FilesStoreInterface } from './filesStoreInterface';
 
-export class ImageKitStore implements FilesStore {
+export class ImageKitStore implements FilesStoreInterface {
   private imagekit: ImageKit;
 
   constructor() {
@@ -26,7 +26,7 @@ export class ImageKitStore implements FilesStore {
     });
   }
 
-  async upload(fileData: FileData, fileName: string): Promise<FileInfo> {
+  async upload(fileData: Buffer, fileName: string): Promise<FileInfo> {
     const response = await this.imagekit.upload({
       file: fileData,
       fileName,

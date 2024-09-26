@@ -4,21 +4,10 @@ import { FromSchema } from 'json-schema-to-ts';
 import { generate } from 'randomstring';
 import { CacheService } from '../cache/cacheService';
 import { authApiKeyCreateSchema, authApiKeySchema } from './authSchema';
+import authPermissions from './authPermissions.json';
 import ms from 'ms';
 
-export const permissions = [
-  'auth.grantall',
-  'files.read',
-  'files.write',
-  'files.delete',
-  'projects.read',
-  'projects.write',
-  'projects.delete',
-  'emails.write',
-  'testimonials.read',
-  'testimonials.write',
-  'testimonials.delete',
-] as const;
+export const permissions = ['auth.grantall', ...authPermissions];
 
 const grantAll = permissions[0];
 

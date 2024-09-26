@@ -19,28 +19,26 @@ options on making things ready
   1. run build [script](#scripts)
   1. run `docker compose up -d`
 
-## Features
+## Features/ modules
 
 - [cache](./src/modules/cache/)
-  - endpoints optimized by cache
+  - api endpoints optimized by cache
   - uses redis under the hood
 - [auth](./src/modules/auth/)
   - generate api key
-    - modular access
+    - [modular access](./src/modules/auth/authPermissions.json)
   - revoke api key
 - [emails](./src/modules/emails/)
   - send email using SMTP
 - [files](./src/modules/files/)
-  - [factory](./src/modules/files/filesStoreFactory.ts)
-    - upload & delete
-    - custom files store
-  - CRUD operation
+  - [upload & delete](./src/modules/files/stores/filesStoreInterface.ts)
+  - custom files store ([factory](./src/modules/files/filesStoreFactory.ts))
 - [projects](./src/modules/projects/)
-  - CRUD operation
+  - create, read, update, and delete operations
 - [testimonials](./src/modules/testimonials/)
   - generate testimonial key
     - strategy to prevent spams
-  - CRUD operation
+  - create, read, and delete operations
 
 ## Scripts
 

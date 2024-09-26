@@ -1,0 +1,12 @@
+[
+  "files.read",
+  "files.write",
+  "files.delete",
+  "projects.read",
+  "projects.write",
+  "projects.delete",
+  "emails.write",
+  "testimonials.read",
+  "testimonials.write",
+  "testimonials.delete"
+]

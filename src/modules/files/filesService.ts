@@ -6,7 +6,7 @@ import ms from 'ms';
 import fs from 'node:fs';
 import { CacheService } from '../cache/cacheService';
 import { fileListPayloadSchema, fileSchema } from './filesSchema';
-import { FilesStore } from './filesStoreFactory';
+import { FilesStoreInterface } from './stores/filesStoreInterface';
 
 export type FileInfo = FromSchema<typeof fileSchema>;
 
@@ -15,7 +15,7 @@ export type FileListPayload = FromSchema<typeof fileListPayloadSchema>;
 export class FilesService {
   constructor(
     private readonly cacheService: CacheService,
-    private readonly filesStore: FilesStore,
+    private readonly filesStore: FilesStoreInterface,
     private readonly prismaClient: PrismaClient,
   ) {}
 
