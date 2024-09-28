@@ -3,7 +3,6 @@ import { FromSchema } from 'json-schema-to-ts';
 import ms from 'ms';
 import { asRoute } from '../../lib/common';
 import { authApiPermissionHandler } from '../auth/authPreHandler';
-import { filesFieldsMultiple } from './filesHandlers';
 import {
   fileDeleteSchema,
   fileListPayloadSchema,
@@ -43,11 +42,6 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preValidation: [
-        filesFieldsMultiple(['files'], {
-          files: 5,
-        }),
-      ],
       preHandler: [authApiPermissionHandler('files.write')],
       async handler(request) {
         const files = await request.saveRequestFiles();

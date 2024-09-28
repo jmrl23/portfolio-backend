@@ -14,7 +14,6 @@ import {
   testimonialSchema,
 } from './testimonialsSchema';
 import { TestimonialsService } from './testimonialsService';
-import { filesFieldsSingle } from '../files/filesHandlers';
 
 export default asRoute(async function (app) {
   const testimonialsService = new TestimonialsService(
@@ -58,7 +57,6 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preValidation: [filesFieldsSingle(['image'])],
       async handler(
         request: FastifyRequest<{
           Body: FromSchema<typeof testimonialCreateSchema>;

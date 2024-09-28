@@ -49,11 +49,6 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preValidation: [
-        filesFieldsMultiple(['images'], {
-          files: 20,
-        }),
-      ],
       preHandler: [authApiPermissionHandler('projects.write')],
       async handler(
         request: FastifyRequest<{
@@ -180,22 +175,22 @@ export default asRoute(async function (app) {
           },
         },
       },
-      preValidation: [
-        filesFieldsMultiple(['upload'], {
-          files: 15,
-        }),
-        async (request) => {
-          // TODO: create utility to prevent hax like this
-          const body = request.body as Record<string, any>;
-          if (!body) return;
-          if (!Array.isArray(body.remove)) {
-            body.remove = body.remove.value ? [body.remove.value] : [];
-            return;
-          }
-          body.remove = body.remove.map((item: any) => item.value);
-          console.log(body);
-        },
-      ],
+      // preValidation: [
+      //   filesFieldsMultiple(['upload'], {
+      //     files: 15,
+      //   }),
+      //   async (request) => {
+      //     // TODO: create utility to prevent hax like this
+      //     const body = request.body as Record<string, any>;
+      //     if (!body) return;
+      //     if (!Array.isArray(body.remove)) {
+      //       body.remove = body.remove.value ? [body.remove.value] : [];
+      //       return;
+      //     }
+      //     body.remove = body.remove.map((item: any) => item.value);
+      //     console.log(body);
+      //   },
+      // ],
       preHandler: [authApiPermissionHandler('projects.write')],
       async handler(
         request: FastifyRequest<{
