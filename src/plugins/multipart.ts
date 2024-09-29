@@ -6,8 +6,8 @@ export default fastifyPlugin(async function (app) {
     attachFieldsToBody: true,
     limits: {
       fileSize: 20_000_000,
+      files: 10,
     },
-    sharedSchemaId: '#multipartField',
   });
 
   // Fixes body fields
