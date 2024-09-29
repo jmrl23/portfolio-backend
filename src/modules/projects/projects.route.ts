@@ -12,7 +12,6 @@ import {
   projectUpdateSchema,
 } from './projectsSchema';
 import { ProjectsService } from './projectsService';
-import { filesFieldsMultiple } from '../files/filesHandlers';
 
 export default asRoute(async function (app) {
   const projectsService = new ProjectsService(
