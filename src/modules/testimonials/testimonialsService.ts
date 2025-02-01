@@ -11,6 +11,7 @@ import {
 } from './testimonialsSchema';
 import ms from 'ms';
 import { SavedMultipartFile } from '@fastify/multipart';
+import { faker } from '@faker-js/faker/locale/en_US';
 
 export type Testimonial = FromSchema<typeof testimonialSchema>;
 
@@ -105,7 +106,7 @@ export class TestimonialsService {
     const cachedData = await this.cacheService.get<Testimonial[]>(cacheKey);
     if (cachedData !== undefined) return cachedData;
 
-    const testimonials = await this.prismaClient.testimonial.findMany({
+    let testimonials = await this.prismaClient.testimonial.findMany({
       where: {
         createdAt: {
           gte: payload.createdAtFrom,
@@ -143,6 +144,25 @@ export class TestimonialsService {
         },
       },
     });
+
+    if (testimonials.length < 1) {
+      testimonials = faker.helpers.multiple(
+        () => ({
+          id: faker.string.uuid(),
+          createdAt: faker.date.between({
+            from: new Date('2023-01-01'),
+            to: new Date('2024-01-01'),
+          }),
+          author: faker.person.fullName(),
+          bio: faker.person.jobTitle(),
+          content: faker.lorem.paragraph(),
+          image: null,
+        }),
+        {
+          count: { min: 6, max: 12 },
+        },
+      );
+    }
 
     const testimonialList: Testimonial[] = testimonials.map((testimonial) =>
       TestimonialsService.serializeTestimonial(testimonial),

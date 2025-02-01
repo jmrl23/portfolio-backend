@@ -33,6 +33,7 @@
     "typescript-eslint": "^8.6.0"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.4.0",
     "@fastify/cors": "^10.0.0",
     "@fastify/etag": "^6.0.0",
     "@fastify/middie": "^9.0.2",
